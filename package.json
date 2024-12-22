@@ -12,6 +12,8 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
+    "@stripe/react-stripe-js": "^3.1.1",
+    "@stripe/stripe-js": "^5.4.0",
     "clsx": "^2.1.0",
     "date-fns": "^4.1.0",
     "framer-motion": "^11.15.0",
@@ -28,6 +30,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^8.56.0",
+    "@types/node": "^22.10.2",
     "@types/react": "^18.2.48",
     "@types/react-dom": "^18.2.18",
     "@types/react-slick": "^0.23.13",

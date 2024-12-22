@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { MapPin, Search } from "lucide-react";
 import { motion } from "framer-motion";
 import CityAutocomplete from "./CityAutocomplete";
-// import Input from "../../common/Input";
 import { useNavigate } from "react-router-dom";
 import Button from "../../common/Button";
 import { DatePicker } from "../../common/DatePicker";
@@ -26,7 +25,6 @@ const SearchForm: React.FC<SearchFormProps> = ({ defaultValues }) => {
 
   const validateForm = (): boolean => {
     const newErrors: Partial<SearchFormData> = {};
-
     if (!formData.departure) {
       newErrors.departure = "Ville de départ requise";
     }
@@ -44,18 +42,6 @@ const SearchForm: React.FC<SearchFormProps> = ({ defaultValues }) => {
 
     if (!formData.date) {
       newErrors.date = "Date requise";
-    } else {
-      const selectedDate = new Date(formData.date);
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-
-      if (selectedDate < today) {
-        newErrors.date = "La date doit être aujourd'hui ou ultérieure";
-      }
-    }
-
-    if (formData.passengers < 1 || formData.passengers > 9) {
-      newErrors.passengers = formData.passengers;
     }
 
     setErrors(newErrors);
@@ -64,16 +50,15 @@ const SearchForm: React.FC<SearchFormProps> = ({ defaultValues }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (validateForm()) {
       setIsSearching(true);
-
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      setIsSearching(false);
-      console.log("Form submitted:", formData);
-      navigate("/search-results", { state: { searchParams: formData } });
+      try {
+        navigate("/search-results", {
+          state: { searchData: formData }, // Pass form data through navigation
+        });
+      } finally {
+        setIsSearching(false);
+      }
     }
   };
 

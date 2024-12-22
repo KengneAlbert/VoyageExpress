@@ -1,6 +1,19 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Search, ChevronDown, ChevronUp, Phone, Mail, MessageCircle } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  Search, 
+  ChevronDown, 
+  ChevronUp, 
+  Phone, 
+  Mail, 
+  MessageCircle,
+  Ticket,
+  CreditCard,
+  Bus,
+  Map,
+  Calendar,
+  Users
+} from 'lucide-react';
 
 const FAQ_SECTIONS = [
   {
@@ -37,117 +50,197 @@ const FAQ_SECTIONS = [
 ];
 
 const Help = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [openSection, setOpenSection] = useState<string | null>(null);
-
-  const filteredFAQ = FAQ_SECTIONS.map(section => ({
-    ...section,
-    questions: section.questions.filter(
-      q => q.q.toLowerCase().includes(searchTerm.toLowerCase()) ||
-           q.a.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-  })).filter(section => section.questions.length > 0);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [activeSection, setActiveSection] = useState<string | null>(null);
+  const [activeQuestion, setActiveQuestion] = useState<string | null>(null);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-950 to-gray-900 pt-24">
+    <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] 
+                    from-orange-900/20 via-gray-900 to-gray-900 pt-24 pb-12">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
+        {/* Hero Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-12"
+          className="text-center mb-16"
         >
-          <h1 className="text-4xl font-bold text-white mb-4">
-            Comment pouvons-nous <span className="text-orange-400">vous aider ?</span>
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-white to-gray-300 
+                       bg-clip-text text-transparent mb-4">
+            Comment pouvons-nous vous aider ?
           </h1>
-          <p className="text-gray-400 max-w-2xl mx-auto">
+          <p className="text-gray-400 mb-8">
             Trouvez rapidement des réponses à vos questions
           </p>
+          <div className="relative max-w-xl mx-auto">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Rechercher une question..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-12 pr-4 py-4 bg-gray-800/50 border border-gray-700 
+                       rounded-2xl text-white placeholder-gray-400 focus:outline-none 
+                       focus:ring-2 focus:ring-orange-500"
+            />
+          </div>
         </motion.div>
 
-        {/* Search Bar */}
-        <div className="relative max-w-2xl mx-auto mb-12">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Rechercher une question..."
-            className="w-full pl-12 pr-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg 
-                     text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
-          />
+        {/* FAQ Categories */}
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-12">
+          {[
+            { title: "Réservation", icon: Ticket },
+            { title: "Paiement", icon: CreditCard },
+            { title: "Voyage", icon: Bus },
+            { title: "Destinations", icon: Map },
+            { title: "Horaires", icon: Calendar },
+            { title: "Passagers", icon: Users }
+          ].map((category, index) => (
+            <motion.button
+              key={category.title}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              onClick={() => setActiveSection(category.title)}
+              className={`p-4 bg-gradient-to-br from-gray-800/80 to-gray-900/80 
+                       backdrop-blur-xl rounded-xl border transition-all
+                       ${activeSection === category.title
+                         ? 'border-orange-500 bg-orange-500/10'
+                         : 'border-gray-700 hover:border-gray-600'}`}
+            >
+              <category.icon className={`w-6 h-6 mx-auto mb-2 
+                ${activeSection === category.title ? 'text-orange-400' : 'text-gray-400'}`} />
+              <span className={`text-sm font-medium 
+                ${activeSection === category.title ? 'text-orange-400' : 'text-gray-300'}`}>
+                {category.title}
+              </span>
+            </motion.button>
+          ))}
         </div>
 
-        {/* FAQ Sections */}
-        <div className="space-y-6">
-          {filteredFAQ.map((section) => (
+        {/* FAQ Accordion */}
+        <div className="space-y-4">
+          {FAQ_SECTIONS.map((section) => (
             <motion.div
               key={section.title}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-gray-900/50 backdrop-blur-xl rounded-xl border border-gray-800/50 overflow-hidden"
+              className="bg-gradient-to-br from-gray-800/80 to-gray-900/80 
+                       backdrop-blur-xl rounded-xl border border-gray-700"
             >
               <button
-                onClick={() => setOpenSection(openSection === section.title ? null : section.title)}
-                className="w-full p-6 flex items-center justify-between hover:bg-gray-800/50 transition-colors"
+                onClick={() => setActiveSection(
+                  activeSection === section.title ? null : section.title
+                )}
+                className="w-full px-6 py-4 flex items-center justify-between"
               >
-                <h2 className="text-xl font-semibold text-white">{section.title}</h2>
-                {openSection === section.title ? (
-                  <ChevronUp className="h-5 w-5 text-gray-400" />
+                <span className="text-lg font-medium text-white">{section.title}</span>
+                {activeSection === section.title ? (
+                  <ChevronUp className="w-5 h-5 text-orange-400" />
                 ) : (
-                  <ChevronDown className="h-5 w-5 text-gray-400" />
+                  <ChevronDown className="w-5 h-5 text-gray-400" />
                 )}
               </button>
-
-              {openSection === section.title && (
-                <div className="px-6 pb-6 space-y-4">
-                  {section.questions.map((qa, index) => (
-                    <div key={index} className="border-t border-gray-800 pt-4">
-                      <h3 className="text-white font-medium mb-2">{qa.q}</h3>
-                      <p className="text-gray-400">{qa.a}</p>
+              
+              <AnimatePresence>
+                {activeSection === section.title && (
+                  <motion.div
+                    initial={{ height: 0 }}
+                    animate={{ height: "auto" }}
+                    exit={{ height: 0 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="px-6 pb-4 space-y-4">
+                      {section.questions.map((qa) => (
+                        <div 
+                          key={qa.q}
+                          className="p-4 bg-gray-800/50 rounded-lg border border-gray-700"
+                        >
+                          <button
+                            onClick={() => setActiveQuestion(
+                              activeQuestion === qa.q ? null : qa.q
+                            )}
+                            className="w-full flex items-center justify-between"
+                          >
+                            <span className="text-gray-200">{qa.q}</span>
+                            {activeQuestion === qa.q ? (
+                              <ChevronUp className="w-4 h-4 text-orange-400" />
+                            ) : (
+                              <ChevronDown className="w-4 h-4 text-gray-400" />
+                            )}
+                          </button>
+                          <AnimatePresence>
+                            {activeQuestion === qa.q && (
+                              <motion.div
+                                initial={{ height: 0 }}
+                                animate={{ height: "auto" }}
+                                exit={{ height: 0 }}
+                                className="overflow-hidden"
+                              >
+                                <p className="mt-4 text-gray-400 text-sm">
+                                  {qa.a}
+                                </p>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </motion.div>
           ))}
         </div>
 
-        {/* Contact Support */}
-        <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <motion.a
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            href="tel:+237655555555"
-            className="flex flex-col items-center p-6 bg-gray-900/50 backdrop-blur-xl rounded-xl border border-gray-800/50 hover:bg-gray-800/50 transition-colors"
-          >
-            <Phone className="h-8 w-8 text-orange-400 mb-3" />
-            <h3 className="text-white font-medium">Appelez-nous</h3>
-            <p className="text-gray-400 text-sm">+237 655 555 555</p>
-          </motion.a>
-
-          <motion.a
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            href="mailto:support@voyageexpress.cm"
-            className="flex flex-col items-center p-6 bg-gray-900/50 backdrop-blur-xl rounded-xl border border-gray-800/50 hover:bg-gray-800/50 transition-colors"
-          >
-            <Mail className="h-8 w-8 text-orange-400 mb-3" />
-            <h3 className="text-white font-medium">Envoyez-nous un email</h3>
-            <p className="text-gray-400 text-sm">support@voyageexpress.cm</p>
-          </motion.a>
-
-          <motion.a
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            href="#chat"
-            className="flex flex-col items-center p-6 bg-gray-900/50 backdrop-blur-xl rounded-xl border border-gray-800/50 hover:bg-gray-800/50 transition-colors"
-          >
-            <MessageCircle className="h-8 w-8 text-orange-400 mb-3" />
-            <h3 className="text-white font-medium">Chat en direct</h3>
-            <p className="text-gray-400 text-sm">Disponible 24/7</p>
-          </motion.a>
-        </div>
+        {/* Contact Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mt-16 text-center"
+        >
+          <h2 className="text-2xl font-bold text-white mb-8">
+            Vous n'avez pas trouvé votre réponse ?
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              {
+                icon: Phone,
+                title: "Par téléphone",
+                content: "+237 6XX XXX XXX",
+                action: "Appelez-nous"
+              },
+              {
+                icon: Mail,
+                title: "Par email",
+                content: "support@ve-transport.com",
+                action: "Envoyez un email"
+              },
+              {
+                icon: MessageCircle,
+                title: "Chat en direct",
+                content: "Temps de réponse < 5min",
+                action: "Démarrer le chat"
+              }
+            ].map((contact) => (
+              <motion.a
+                key={contact.title}
+                href="#"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="p-6 bg-gradient-to-br from-gray-800/80 to-gray-900/80 
+                         backdrop-blur-xl rounded-xl border border-gray-700
+                         hover:border-orange-500/50 transition-all group"
+              >
+                <contact.icon className="w-8 h-8 mx-auto mb-4 text-orange-400" />
+                <h3 className="text-lg font-medium text-white mb-2">{contact.title}</h3>
+                <p className="text-gray-400 text-sm mb-4">{contact.content}</p>
+                <span className="text-orange-400 text-sm font-medium group-hover:text-orange-300">
+                  {contact.action} →
+                </span>
+              </motion.a>
+            ))}
+          </div>
+        </motion.div>
       </div>
     </div>
   );

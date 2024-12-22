@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search } from "lucide-react";
+import { useLocation } from "react-router-dom";
 import Header from "../../layout/Header";
 import SearchForm from "../resultSearch/SearchResultForm";
 import FilterBar from "../resultSearch/FilterBar";
@@ -57,7 +58,15 @@ const trips = [
   },
 ];
 
-export default function SearchResults() {
+const SearchResults = () => {
+  const location = useLocation();
+  const defaultValues = location.state?.searchData || {
+    departure: "",
+    destination: "",
+    date: "",
+    passengers: 1
+  };
+
   const [sortType, setSortType] = useState("");
   const [activeFilters, setActiveFilters] = useState<{
     price?: string;
@@ -103,7 +112,7 @@ export default function SearchResults() {
         <div className="grid grid-cols-1 lg:grid-cols-[420px,1fr] gap-8">
           {/* Sidebar */}
           <aside className="lg:sticky lg:top-24 h-fit">
-            <SearchForm />
+            <SearchForm defaultValues={defaultValues} />
           </aside>
 
           {/* Results Section */}
@@ -179,4 +188,6 @@ export default function SearchResults() {
       </main>
     </div>
   );
-}
+};
+
+export default SearchResults;

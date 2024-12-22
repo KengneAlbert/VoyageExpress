@@ -1,5 +1,13 @@
-import React, { useState, useEffect } from "react";
-import { Menu, X, Globe, Check } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+import {
+  Menu,
+  X,
+  Globe,
+  Check,
+  UserCircle,
+  Settings,
+  LogOut,
+} from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Navigation from "./Navigation";
 import LanguageSelector from "./LanguageSelector";
@@ -10,6 +18,8 @@ const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
   const [currentLanguage, setCurrentLanguage] = useState("FR");
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const profileMenuRef = useRef<HTMLDivElement>(null);
 
   const languages = [
     { code: "FR", label: "Français" },
@@ -22,6 +32,20 @@ const Header = () => {
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Add click outside handler
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        profileMenuRef.current &&
+        !profileMenuRef.current.contains(event.target as Node)
+      ) {
+        setIsProfileMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   return (
@@ -138,6 +162,68 @@ const Header = () => {
                               group-hover:opacity-100 rounded-lg blur transition-opacity"
                 />
               </Link>
+            </div>
+
+            {/* Profile Menu */}
+            <div className="relative">
+              <button
+                onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+                className="flex items-center gap-2 p-2 text-gray-300 hover:text-white rounded-lg hover:bg-gray-800/50 transition-colors"
+              >
+                <UserCircle className="h-6 w-6" />
+                <span className="text-sm">John Doe</span>
+              </button>
+
+              {/* Dropdown Menu */}
+              <AnimatePresence>
+                {isProfileMenuOpen && (
+                  <motion.div
+                    ref={profileMenuRef}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    className="absolute right-0 mt-2 w-48 bg-gray-900 rounded-xl border border-gray-800/50 shadow-xl py-1 z-50"
+                  >
+                    <div className="px-4 py-3 border-b border-gray-800">
+                      <p className="text-sm text-white font-medium">John Doe</p>
+                      <p className="text-xs text-gray-400">john@example.com</p>
+                    </div>
+
+                    <div className="py-1">
+                      <Link
+                        to="/profile"
+                        className="w-full px-4 py-2 text-sm text-gray-300 hover:text-white 
+                                  hover:bg-gray-800 flex items-center gap-2"
+                      >
+                        <UserCircle className="h-4 w-4" />
+                        Mon profil
+                      </Link>
+                      
+                      <Link
+                        to="/settings"
+                        className="w-full px-4 py-2 text-sm text-gray-300 hover:text-white 
+                                  hover:bg-gray-800 flex items-center gap-2"
+                      >
+                        <Settings className="h-4 w-4" />
+                        Paramètres
+                      </Link>
+                    </div>
+
+                    <div className="border-t border-gray-800 py-1">
+                      <button
+                        onClick={() => {
+                          /* handle logout */
+                        }}
+                        className="w-full px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-gray-800 
+                                 flex items-center gap-2"
+                      >
+                        <LogOut className="h-4 w-4" />
+                        Déconnexion
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </div>
         </div>

@@ -11,13 +11,12 @@ interface FormData {
   passengers: number;
 }
 
-const SearchForm = () => {
-  const [formData, setFormData] = useState<FormData>({
-    departure: "",
-    destination: "",
-    date: "",
-    passengers: 1,
-  });
+interface SearchResultFormProps {
+  defaultValues: FormData;
+}
+
+const SearchResultForm = ({ defaultValues }: SearchResultFormProps) => {
+  const [formData, setFormData] = useState<FormData>(defaultValues);
   const [errors, setErrors] = useState<Partial<FormData>>({});
 
   const handlePassengersChange = (increment: number) => {
@@ -190,4 +189,4 @@ const SearchForm = () => {
   );
 };
 
-export default SearchForm;
+export default SearchResultForm;

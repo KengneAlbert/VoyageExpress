@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Mail, Lock, Eye, EyeOff, AlertCircle } from "lucide-react";
 import AuthLayout from "./AuthLayout";
 
@@ -12,6 +12,7 @@ const Login = () => {
     email: "",
     password: "",
   });
+  const navigate = useNavigate();
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -27,8 +28,10 @@ const Login = () => {
 
     setIsLoading(true);
     try {
-      // Handle login logic
+      // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1500));
+      // Redirect to home
+      navigate('/');
     } catch (error) {
       console.error(error);
     } finally {

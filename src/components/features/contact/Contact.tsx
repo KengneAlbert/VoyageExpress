@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, Phone, MapPin, Clock, Send } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, Facebook, Instagram, Twitter } from 'lucide-react';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -14,13 +14,38 @@ const Contact = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    // Add form submission logic here
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    setIsSubmitting(false);
+    try {
+      // Add your form submission logic here
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
+  const contactInfo = [
+    {
+      icon: <Phone className="w-6 h-6 text-orange-400" />,
+      title: "Téléphone",
+      content: "+237 6XX XXX XXX",
+      details: "Lun-Sam 8h-18h"
+    },
+    {
+      icon: <Mail className="w-6 h-6 text-orange-400" />,
+      title: "Email",
+      content: "contact@ve-transport.com",
+      details: "Réponse sous 24h"
+    },
+    {
+      icon: <MapPin className="w-6 h-6 text-orange-400" />,
+      title: "Adresse",
+      content: "123 Avenue de l'Union, Douala",
+      details: "Cameroun"
+    }
+  ];
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-950 to-gray-900 pt-24">
+    <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] 
+                    from-orange-900/20 via-gray-900 to-gray-900 pt-24 pb-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header Section */}
         <motion.div
@@ -28,150 +53,169 @@ const Contact = () => {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-16"
         >
-          <h1 className="text-4xl font-bold text-white mb-4">
-            Contactez <span className="text-orange-400">Nous</span>
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-white to-gray-300 
+                       bg-clip-text text-transparent mb-4">
+            Contactez-nous
           </h1>
           <p className="text-gray-400 max-w-2xl mx-auto">
-            Notre équipe est disponible 24/7 pour répondre à vos questions
+            Une question ? Un problème ? N'hésitez pas à nous contacter. 
+            Notre équipe est là pour vous aider.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Contact Form */}
-          <motion.div
+        {/* Contact Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+          {contactInfo.map((info, index) => (
+            <motion.div
+              key={info.title}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              className="bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-xl 
+                        rounded-2xl border border-white/10 p-6 hover:border-orange-500/50 
+                        transition-all duration-300"
+            >
+              <div className="w-12 h-12 bg-orange-500/10 rounded-xl flex items-center 
+                           justify-center mb-4">
+                {info.icon}
+              </div>
+              <h3 className="text-lg font-semibold text-white mb-2">{info.title}</h3>
+              <p className="text-gray-300">{info.content}</p>
+              <p className="text-sm text-gray-400 mt-1">{info.details}</p>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Contact Form Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr,400px] gap-8">
+          <motion.form
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="bg-gray-900/50 backdrop-blur-xl p-8 rounded-xl border border-gray-800/50"
+            onSubmit={handleSubmit}
+            className="bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-xl 
+                      rounded-2xl border border-white/10 p-8"
           >
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-2">
-                    Nom complet
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg 
-                             text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
-                    placeholder="John Doe"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-2">
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg 
-                             text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
-                    placeholder="john@example.com"
-                    required
-                  />
-                </div>
-              </div>
-
+            <h2 className="text-2xl font-bold text-white mb-6">Envoyez-nous un message</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-400 mb-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Nom complet
+                </label>
+                <input
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) => setFormData({...formData, name: e.target.value})}
+                  className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-xl 
+                           text-white placeholder-gray-400 focus:outline-none focus:ring-2 
+                           focus:ring-orange-500"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => setFormData({...formData, email: e.target.value})}
+                  className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-xl 
+                           text-white placeholder-gray-400 focus:outline-none focus:ring-2 
+                           focus:ring-orange-500"
+                  required
+                />
+              </div>
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
                   Sujet
                 </label>
                 <input
                   type="text"
                   value={formData.subject}
-                  onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                  className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg 
-                           text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
-                  placeholder="Comment pouvons-nous vous aider ?"
+                  onChange={(e) => setFormData({...formData, subject: e.target.value})}
+                  className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-xl 
+                           text-white placeholder-gray-400 focus:outline-none focus:ring-2 
+                           focus:ring-orange-500"
                   required
                 />
               </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-400 mb-2">
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
                   Message
                 </label>
                 <textarea
                   value={formData.message}
-                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                  onChange={(e) => setFormData({...formData, message: e.target.value})}
                   rows={6}
-                  className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg 
-                           text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
-                  placeholder="Votre message..."
+                  className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-xl 
+                           text-white placeholder-gray-400 focus:outline-none focus:ring-2 
+                           focus:ring-orange-500 resize-none"
                   required
                 />
               </div>
+            </div>
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              type="submit"
+              disabled={isSubmitting}
+              className="mt-6 w-full py-3 bg-gradient-to-r from-orange-500 to-orange-600 
+                       rounded-xl text-white font-medium shadow-lg flex items-center 
+                       justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSubmitting ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent 
+                               rounded-full animate-spin" />
+                  <span>Envoi en cours...</span>
+                </>
+              ) : (
+                <>
+                  <Send className="w-5 h-5" />
+                  <span>Envoyer le message</span>
+                </>
+              )}
+            </motion.button>
+          </motion.form>
 
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full py-3 px-4 bg-gradient-to-r from-orange-500 to-orange-600 
-                         text-white font-medium rounded-lg shadow-lg shadow-orange-500/20 
-                         hover:shadow-orange-500/30 transition-all flex items-center justify-center gap-2"
-              >
-                {isSubmitting ? (
-                  <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                ) : (
-                  <>
-                    <Send className="w-5 h-5" />
-                    <span>Envoyer</span>
-                  </>
-                )}
-              </motion.button>
-            </form>
-          </motion.div>
-
-          {/* Contact Info */}
+          {/* Map Section */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="space-y-8"
+            className="bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-xl 
+                      rounded-2xl border border-white/10 overflow-hidden"
           >
-            {/* Contact Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <div className="bg-gray-900/50 backdrop-blur-xl p-6 rounded-xl border border-gray-800/50">
-                <Phone className="h-8 w-8 text-orange-400 mb-4" />
-                <h3 className="text-lg font-medium text-white mb-2">Téléphone</h3>
-                <p className="text-gray-400">+237 655 555 555</p>
-              </div>
-              
-              <div className="bg-gray-900/50 backdrop-blur-xl p-6 rounded-xl border border-gray-800/50">
-                <Mail className="h-8 w-8 text-orange-400 mb-4" />
-                <h3 className="text-lg font-medium text-white mb-2">Email</h3>
-                <p className="text-gray-400">contact@voyageexpress.cm</p>
-              </div>
-              
-              <div className="bg-gray-900/50 backdrop-blur-xl p-6 rounded-xl border border-gray-800/50">
-                <MapPin className="h-8 w-8 text-orange-400 mb-4" />
-                <h3 className="text-lg font-medium text-white mb-2">Adresse</h3>
-                <p className="text-gray-400">123 Avenue de l'Union, Douala, Cameroun</p>
-              </div>
-              
-              <div className="bg-gray-900/50 backdrop-blur-xl p-6 rounded-xl border border-gray-800/50">
-                <Clock className="h-8 w-8 text-orange-400 mb-4" />
-                <h3 className="text-lg font-medium text-white mb-2">Horaires</h3>
-                <p className="text-gray-400">Lun - Dim: 24h/24</p>
-              </div>
-            </div>
-
-            {/* Map */}
-            <div className="bg-gray-900/50 backdrop-blur-xl p-4 rounded-xl border border-gray-800/50 h-[300px] overflow-hidden">
-              <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d254355.27751083425!2d9.645768591789698!3d4.050864852335181!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1061128f72b4521d%3A0xc336c4d5a996c534!2sDouala%2C+Cameroun!5e0!3m2!1sfr!2sfr!4v1453911153385"
-                width="100%"
-                height="100%"
-                style={{ border: 0, borderRadius: '0.75rem' }}
-                allowFullScreen
-                loading="lazy"
-              />
-            </div>
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1983.489471691350!2d9.706160716064455!3d4.050930099999994!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x10610de90a438dcf%3A0xd0e6c6a88066153f!2sV.E%20Transport!5e0!3m2!1sfr!2scm!4v1677786234078!5m2!1sfr!2scm"
+              width="100%"
+              height="100%"
+              style={{ border: 0, minHeight: '400px' }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            />
           </motion.div>
         </div>
+
+        {/* Social Media Links */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex justify-center items-center gap-6 mt-16"
+        >
+          {[Facebook, Instagram, Twitter].map((Icon, index) => (
+            <motion.a
+              key={index}
+              href="#"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              className="w-12 h-12 bg-gray-800/50 rounded-full flex items-center justify-center
+                       border border-gray-700 hover:border-orange-500 transition-colors"
+            >
+              <Icon className="w-5 h-5 text-gray-400 hover:text-orange-400" />
+            </motion.a>
+          ))}
+        </motion.div>
       </div>
     </div>
   );

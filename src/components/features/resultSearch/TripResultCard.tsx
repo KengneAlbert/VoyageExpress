@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { Users, Clock, MapPin, ArrowRight, Crown } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface TripPoint {
   city: string;
@@ -22,8 +23,14 @@ interface TripCardProps {
 }
 
 const TripCard = ({ trip }: TripCardProps) => {
+  const navigate = useNavigate();
+
+  const handleBooking = () => {
+    navigate('/booking', { state: { trip } });
+  };
   return (
     <motion.div
+      onClick={handleBooking}
       whileHover={{ scale: 1.02 }}
       transition={{ type: "spring", stiffness: 300 }}
       className="relative bg-gradient-to-r from-gray-900/90 to-gray-800/90 backdrop-blur-xl
