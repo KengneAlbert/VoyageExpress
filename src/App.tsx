@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Header from "./components/layout/Header";
 import SearchResults from "./components/features/landingPage/SearchResults";
@@ -39,6 +39,7 @@ const Newsletter = React.lazy(
 const Footer = React.lazy(() => import("./components/layout/Footer"));
 
 function App() {
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     // Simulate fetching user data after login
@@ -81,7 +82,7 @@ function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/aide" element={<Help />} />
           <Route path="/mes-billets" element={<MyTickets />} />
-          <Route path="/profile" element={<Profile />} />
+          <Route path="/profile" element={<Profile user={user} />} />
           <Route path="/booking" element={<BookingForm />} />
           <Route path="/payment" element={<Payment />} />
           {/* <Route path="/payment-success" element={<PaymentSuccess />} /> */}
@@ -92,4 +93,3 @@ function App() {
 }
 
 export default App;
-

@@ -33,11 +33,16 @@ const Profile = ({ user }: ProfileProps) => {
   });
 
   const [isEditing, setIsEditing] = useState(false);
-  const [editedData, setEditedData] = useState({ ...user });
+  const [editedData, setEditedData] = useState({
+    name: user?.name || "",
+    email: user?.email || "",
+    phone: "", // Add default or fetch if available
+    address: "", // Add default or fetch if available
+    profilePicture: user?.photoURL || "/default-avatar.png",
+  });
 
   const handleEdit = () => {
     setIsEditing(true);
-    setEditedData(user);
   };
 
   const handleSave = () => {
@@ -506,14 +511,14 @@ const Profile = ({ user }: ProfileProps) => {
               </label>
               <div className="flex items-center gap-3 p-3 bg-gray-800/50 rounded-lg">
                 <UserCircle className="w-5 h-5 text-orange-400" />
-                <span className="text-white">{userData.name}</span>
+                <span className="text-white">{user?.name}</span>
               </div>
             </div>
             <div>
               <label className="block text-sm text-gray-400 mb-1">Email</label>
               <div className="flex items-center gap-3 p-3 bg-gray-800/50 rounded-lg">
                 <Mail className="w-5 h-5 text-orange-400" />
-                <span className="text-white">{userData.email}</span>
+                <span className="text-white">{user?.email}</span>
               </div>
             </div>
             <div>
@@ -522,7 +527,7 @@ const Profile = ({ user }: ProfileProps) => {
               </label>
               <div className="flex items-center gap-3 p-3 bg-gray-800/50 rounded-lg">
                 <Phone className="w-5 h-5 text-orange-400" />
-                <span className="text-white">{userData.phone}</span>
+                <span className="text-white">{user?.phone}</span>
               </div>
             </div>
             <div>
@@ -531,7 +536,7 @@ const Profile = ({ user }: ProfileProps) => {
               </label>
               <div className="flex items-center gap-3 p-3 bg-gray-800/50 rounded-lg">
                 <MapPin className="w-5 h-5 text-orange-400" />
-                <span className="text-white">{userData.address}</span>
+                <span className="text-white">{user?.address}</span>
               </div>
             </div>
           </>
@@ -797,8 +802,8 @@ const Profile = ({ user }: ProfileProps) => {
                   <div className="bg-gray-900/50 backdrop-blur-xl rounded-xl border border-gray-800/50 p-6">
                     <div className="relative group">
                       <img
-                        src={userData.profilePicture}
-                        alt={userData.name}
+                        src={user?.photoURL || "/default-avatar.png"}
+                        alt={user?.name}
                         className="w-32 h-32 rounded-full mx-auto object-cover ring-4 ring-orange-500/20"
                       />
                       <button className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
@@ -807,7 +812,7 @@ const Profile = ({ user }: ProfileProps) => {
                     </div>
                     <div className="text-center mt-4">
                       <h2 className="text-xl font-bold text-white">
-                        {userData.name}
+                        {user?.name}
                       </h2>
                       <p className="text-gray-400 text-sm">
                         Membre depuis 2024
