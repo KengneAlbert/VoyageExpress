@@ -8,11 +8,11 @@ import {
   Lock,
   Shield,
   ShieldCheck,
-  CheckCircle
+  CheckCircle,
 } from "lucide-react";
 
 // Payment method icons
-import orangeMoneyLogo from "../../../statics/images/Orange_Money.jpg";
+import orangeMoneyLogo from "../../../statics/images/orange_money.jpg";
 import mtnMoneyLogo from "../../../statics/images/mtn-momo.png";
 import stripeLogo from "../../../statics/images/playstore.png";
 import paypalLogo from "../../../statics/images/playstore.png";
@@ -20,7 +20,7 @@ import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import StripeForm from "./StripeForm";
 
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY || '');
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY || "");
 
 const paymentMethods = [
   {
@@ -28,29 +28,29 @@ const paymentMethods = [
     name: "Orange Money",
     logo: orangeMoneyLogo,
     icon: <Phone className="w-5 h-5" />,
-    type: "mobile"
+    type: "mobile",
   },
   {
     id: "mtn-momo",
     name: "MTN Mobile Money",
     logo: mtnMoneyLogo,
     icon: <Phone className="w-5 h-5" />,
-    type: "mobile"
+    type: "mobile",
   },
   {
     id: "stripe",
     name: "Carte bancaire",
     logo: stripeLogo,
     icon: <CreditCard className="w-5 h-5" />,
-    type: "card"
+    type: "card",
   },
   {
     id: "paypal",
     name: "PayPal",
     logo: paypalLogo,
     icon: <Wallet className="w-5 h-5" />,
-    type: "digital"
-  }
+    type: "digital",
+  },
 ];
 
 const Payment = () => {
@@ -63,13 +63,13 @@ const Payment = () => {
     phoneNumber: "",
     cardNumber: "",
     expiryDate: "",
-    cvv: ""
+    cvv: "",
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -89,8 +89,10 @@ const Payment = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] 
-                    from-orange-900/20 via-gray-900 to-gray-900 pt-24 pb-12">
+    <div
+      className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] 
+                    from-orange-900/20 via-gray-900 to-gray-900 pt-24 pb-12"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Security Badge */}
         <div className="flex items-center justify-center gap-4 mb-8">
@@ -113,11 +115,15 @@ const Payment = () => {
             className="space-y-8"
           >
             {/* Payment Methods Grid */}
-            <div className="bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-xl 
-                          rounded-2xl border border-white/10 shadow-xl overflow-hidden">
+            <div
+              className="bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-xl 
+                          rounded-2xl border border-white/10 shadow-xl overflow-hidden"
+            >
               <div className="p-8 border-b border-gray-700/50">
-                <h2 className="text-2xl font-bold bg-gradient-to-r from-white to-gray-300 
-                             bg-clip-text text-transparent">
+                <h2
+                  className="text-2xl font-bold bg-gradient-to-r from-white to-gray-300 
+                             bg-clip-text text-transparent"
+                >
                   Choisissez votre mode de paiement
                 </h2>
                 <p className="mt-2 text-gray-400">
@@ -134,25 +140,32 @@ const Payment = () => {
                       whileTap={{ scale: 0.98 }}
                       onClick={() => setSelectedMethod(method.id)}
                       className={`relative p-6 rounded-xl border transition-all duration-300
-                              ${selectedMethod === method.id
-                                ? 'bg-orange-500/10 border-orange-500 shadow-lg shadow-orange-500/10'
-                                : 'bg-gray-800/50 border-gray-700 hover:bg-gray-800/80'}`}
+                              ${
+                                selectedMethod === method.id
+                                  ? "bg-orange-500/10 border-orange-500 shadow-lg shadow-orange-500/10"
+                                  : "bg-gray-800/50 border-gray-700 hover:bg-gray-800/80"
+                              }`}
                     >
                       <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-lg bg-gray-800/50 p-2 
-                                    flex items-center justify-center">
-                          <img 
-                            src={method.logo} 
+                        <div
+                          className="w-12 h-12 rounded-lg bg-gray-800/50 p-2 
+                                    flex items-center justify-center"
+                        >
+                          <img
+                            src={method.logo}
                             alt={method.name}
                             className="w-full h-full object-contain"
                           />
                         </div>
                         <div className="flex-1">
-                          <h3 className="text-white font-medium">{method.name}</h3>
+                          <h3 className="text-white font-medium">
+                            {method.name}
+                          </h3>
                           <p className="text-sm text-gray-400">
-                            {method.type === 'mobile' && 'Paiement mobile'}
-                            {method.type === 'card' && 'Paiement par carte'}
-                            {method.type === 'digital' && 'Portefeuille numérique'}
+                            {method.type === "mobile" && "Paiement mobile"}
+                            {method.type === "card" && "Paiement par carte"}
+                            {method.type === "digital" &&
+                              "Portefeuille numérique"}
                           </p>
                         </div>
                         {selectedMethod === method.id && (
@@ -240,7 +253,7 @@ const Payment = () => {
             {/* Credit Card Form */}
             {selectedMethod === "stripe" && (
               <Elements stripe={stripePromise}>
-                <StripeForm 
+                <StripeForm
                   onSubmit={handlePayment}
                   isProcessing={isProcessing}
                 />
