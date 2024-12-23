@@ -32,6 +32,21 @@ const Profile = ({ user }: ProfileProps) => {
     confirmPassword: "",
   });
 
+  const handleChangePassword = () => {
+    // Here you would typically make an API call to update the user password
+    alert("Password changed successfully!");
+    setIsEditingPassword(false);
+  };
+
+  const [isTravelHistoryVisible, setIsTravelHistoryVisible] = useState(false);
+  const [isEmailNotificationsEnabled, setIsEmailNotificationsEnabled] = useState(true);
+
+  const handlePrivacySettingsChange = () => {
+    // Here you would typically make an API call to update the user privacy settings
+    console.log({ isTravelHistoryVisible, isEmailNotificationsEnabled });
+    alert("Privacy settings updated successfully!");
+  };
+
   const [isEditing, setIsEditing] = useState(false);
   const [editedData, setEditedData] = useState({
     name: user?.name || "",
@@ -331,7 +346,6 @@ const Profile = ({ user }: ProfileProps) => {
         </button>
       </div>
 
-      {isEditingPassword ? (
         <form className="space-y-4">
           <div>
             <label className="block text-sm text-gray-400 mb-1">
@@ -397,17 +411,13 @@ const Profile = ({ user }: ProfileProps) => {
             </button>
             <button
               type="submit"
+              onClick={handleChangePassword}
               className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600"
             >
               Sauvegarder
             </button>
           </div>
         </form>
-      ) : (
-        <p className="text-gray-400">
-          Votre dernier changement de mot de passe date du 01/01/2024
-        </p>
-      )}
     </div>
   );
 
@@ -432,7 +442,15 @@ const Profile = ({ user }: ProfileProps) => {
               </p>
             </div>
             <label className="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" className="sr-only peer" />
+              <input
+                type="checkbox"
+                className="sr-only peer"
+                checked={isTravelHistoryVisible}
+                onChange={() => {
+                  setIsTravelHistoryVisible(!isTravelHistoryVisible);
+                  handlePrivacySettingsChange();
+                }}
+              />
               <div
                 className="w-11 h-6 bg-gray-700 rounded-full peer peer-checked:after:translate-x-full 
                           peer-checked:bg-orange-500 after:content-[''] after:absolute after:top-0.5 
@@ -450,7 +468,16 @@ const Profile = ({ user }: ProfileProps) => {
               </p>
             </div>
             <label className="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" className="sr-only peer" defaultChecked />
+              <input
+                type="checkbox"
+                className="sr-only peer"
+                checked={isEmailNotificationsEnabled}
+                onChange={() => {
+                  setIsEmailNotificationsEnabled(!isEmailNotificationsEnabled);
+                  handlePrivacySettingsChange();
+                }}
+                defaultChecked
+              />
               <div
                 className="w-11 h-6 bg-gray-700 rounded-full peer peer-checked:after:translate-x-full 
                           peer-checked:bg-orange-500 after:content-[''] after:absolute after:top-0.5 
@@ -798,27 +825,6 @@ const Profile = ({ user }: ProfileProps) => {
                   animate={{ opacity: 1, x: 0 }}
                   className="space-y-6"
                 >
-                  {/* Profile Picture */}
-                  <div className="bg-gray-900/50 backdrop-blur-xl rounded-xl border border-gray-800/50 p-6">
-                    <div className="relative group">
-                      <img
-                        src={user?.photoURL || "/default-avatar.png"}
-                        alt={user?.name}
-                        className="w-32 h-32 rounded-full mx-auto object-cover ring-4 ring-orange-500/20"
-                      />
-                      <button className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Camera className="w-6 h-6 text-white" />
-                      </button>
-                    </div>
-                    <div className="text-center mt-4">
-                      <h2 className="text-xl font-bold text-white">
-                        {user?.name}
-                      </h2>
-                      <p className="text-gray-400 text-sm">
-                        Membre depuis 2024
-                      </p>
-                    </div>
-                  </div>
 
                   {/* Quick Stats */}
                   <div className="bg-gray-900/50 backdrop-blur-xl rounded-xl border border-gray-800/50 p-6">
