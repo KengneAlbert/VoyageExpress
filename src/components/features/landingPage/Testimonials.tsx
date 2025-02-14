@@ -7,7 +7,7 @@ const TESTIMONIALS = [
     id: 1,
     name: "Sophie M.",
     role: "Voyageuse Régulière",
-    image: "src/statics/cabrel.jpg",
+    image: "src/assets/cabrel.jpg",
     content:
       "Service exceptionnel ! La réservation en ligne est simple et rapide. Je recommande vivement VoyageExpress pour tous vos déplacements au Cameroun.",
     rating: 5,

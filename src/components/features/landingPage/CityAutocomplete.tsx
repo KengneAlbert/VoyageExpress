@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, ReactElement } from 'react';
 import { useDebounce } from 'use-debounce';
 import { CITIES } from '../../../utils/constants';
 
@@ -6,7 +6,8 @@ interface CityAutocompleteProps {
   placeholder: string;
   value: string;
   onChange: (value: string) => void;
-  icon?: React.ReactNode;
+  icon: ReactElement;
+  error?: string; // Ajout de la prop error comme optionnelle
   className?: string;
 }
 
@@ -14,7 +15,9 @@ const CityAutocomplete: React.FC<CityAutocompleteProps> = ({
   placeholder,
   value,
   onChange,
-  icon
+  icon,
+  error,
+  className = ''
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState(value);
@@ -49,8 +52,8 @@ const CityAutocomplete: React.FC<CityAutocompleteProps> = ({
   };
 
   return (
-    <div ref={wrapperRef} className="relative">
-      <div className="relative">
+    <div ref={wrapperRef} className="relative space-y-1">
+      <div className={`relative ${className}`}>
         <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
           {icon}
         </div>
@@ -60,9 +63,16 @@ const CityAutocomplete: React.FC<CityAutocompleteProps> = ({
           onChange={handleInputChange}
           onFocus={() => setIsOpen(true)}
           placeholder={placeholder}
-          className="w-full pl-10 pr-3 py-2 rounded-md bg-white/20 border border-white/30 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-400"
+          className={`w-full pl-10 pr-3 py-2 rounded-md bg-white/20 border
+                     ${error ? 'border-red-500 focus:ring-red-500' : 'border-white/30 focus:ring-orange-400'}
+                     text-white placeholder-gray-300 focus:outline-none focus:ring-2`}
         />
       </div>
+      {error && (
+        <p className="text-sm text-red-500 pl-1">
+          {error}
+        </p>
+      )}
 
       {isOpen && filteredCities.length > 0 && (
         <div className="absolute z-50 w-full mt-1 bg-gray-800 rounded-md shadow-lg max-h-60 overflow-auto">

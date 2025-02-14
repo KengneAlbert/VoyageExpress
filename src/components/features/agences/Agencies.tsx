@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Search, MapPin, Phone, Mail, Star, ArrowUpRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const AGENCIES = [
   {
     id: 1,
     name: "Général Voyage",
-    logo: "src/statics/logove.jpg",
+    logo: "src/assets/logove.jpg",
     rating: 4.8,
     trips: 150,
     destinations: ["Douala", "Yaoundé", "Bafoussam"],
@@ -18,7 +19,7 @@ const AGENCIES = [
   {
     id: 2,
     name: "United Express",
-    logo: "src/statics/logove.jpg",
+    logo: "src/assets/logove.jpg",
     rating: 4.6,
     trips: 120,
     destinations: ["Douala", "Yaoundé", "Bafoussam"],
@@ -30,7 +31,7 @@ const AGENCIES = [
   {
     id: 3,
     name: "Bluebird",
-    logo: "src/statics/logove.jpg",
+    logo: "src/assets/logove.jpg",
     rating: 4.4,
     trips: 100,
     destinations: ["Douala", "Yaoundé", "Bafoussam"],
@@ -42,8 +43,13 @@ const AGENCIES = [
 ];
 
 const AgenciesPage = () => {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedFilter, setSelectedFilter] = useState("all");
+
+  const handleViewAgency = (agencyId: number) => {
+    navigate(`/agences/${agencyId}`);
+  };
 
   return (
     <div
@@ -189,6 +195,7 @@ const AgenciesPage = () => {
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
+                  onClick={() => handleViewAgency(agency.id)}
                   className="w-full mt-4 py-3 px-4 bg-gradient-to-r from-orange-500 to-orange-600 
                            rounded-xl text-white font-medium shadow-lg flex items-center justify-center 
                            gap-2 group-hover:shadow-orange-500/25 transition-all"

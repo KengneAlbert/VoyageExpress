@@ -3,17 +3,17 @@ import { motion } from "framer-motion";
 import "react-lazy-load-image-component/src/effects/blur.css";
 
 // Lazy loading des composants majeurs
-const Hero = React.lazy(() => import("./components/Hero"));
-const About = React.lazy(() => import("./components/About"));
-const BookingSteps = React.lazy(() => import("./components/BookingSteps"));
+const Hero = React.lazy(() => import("../components/features/landingPage/Hero"));
+const About = React.lazy(() => import("../components/features/landingPage/About"));
+const BookingSteps = React.lazy(() => import("../components/features/landingPage/BookingSteps"));
 const TopDestinations = React.lazy(
-  () => import("./components/TopDestinations")
+  () => import("../components/features/landingPage/TopDestinations")
 );
-const Destinations = React.lazy(() => import("./components/Destinations"));
-const Testimonials = React.lazy(() => import("./components/Testimonials"));
-const Partners = React.lazy(() => import("./components/Partners"));
-const Newsletter = React.lazy(() => import("./components/Newsletter"));
-const Footer = React.lazy(() => import("./components/Footer"));
+const Destinations = React.lazy(() => import("../components/features/landingPage/Destinations"));
+const Testimonials = React.lazy(() => import("../components/features/landingPage/Testimonials"));
+const Partners = React.lazy(() => import("../components/features/landingPage/Partners"));
+const Newsletter = React.lazy(() => import("../components/features/landingPage/Newsletter"));
+const Footer = React.lazy(() => import("../components/layout/Footer"));
 
 function App() {
   return (
@@ -26,7 +26,7 @@ function App() {
         <Destinations />
         <Testimonials />
         <Partners />
-        <DownloadApp />
+        {/* <DownloadApp /> */}
         <Newsletter />
         <Footer />
       </Suspense>
@@ -50,7 +50,7 @@ function LoadingSkeleton() {
 }
 
 import { useState } from "react";
-import DownloadApp from "./components/DownloadApp";
+// import DownloadApp from "./components/DownloadApp";
 
 const SearchForm = () => {
   const [isSearching] = useState(false);

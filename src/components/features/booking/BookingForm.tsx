@@ -124,7 +124,7 @@ const BookingForm = () => {
   const steps = [
     { id: 1, title: "Passagers", icon: <User className="w-5 h-5" /> },
     { id: 2, title: "Places", icon: <Armchair className="w-5 h-5" /> },
-    { id: 3, title: "Paiement", icon: <CreditCard className="w-5 h-5" /> }
+    // { id: 3, title: "Paiement", icon: <CreditCard className="w-5 h-5" /> }
   ];
 
   // Add step navigation controls
@@ -439,21 +439,6 @@ const BookingForm = () => {
               </motion.div>
             )}
 
-            {activeStep === 3 && (
-              <motion.div className="flex justify-between mt-6">
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={handlePrevStep}
-                  className="px-6 py-3 bg-gray-800 rounded-xl text-gray-300 
-                            font-medium hover:bg-gray-700 transition-colors
-                            flex items-center gap-2"
-                >
-                  <ArrowLeft className="w-5 h-5" />
-                  Retour
-                </motion.button>
-              </motion.div>
-            )}
           </motion.div>
 
           {/* Price Summary */}

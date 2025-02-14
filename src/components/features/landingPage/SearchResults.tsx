@@ -60,6 +60,10 @@ const trips = [
 
 const SearchResults = () => {
   const location = useLocation();
+  const searchData = location.state?.searchData;
+
+  console.log('Search Data received:', searchData);
+
   const defaultValues = location.state?.searchData || {
     departure: "",
     destination: "",

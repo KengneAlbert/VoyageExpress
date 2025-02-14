@@ -1,4 +1,3 @@
-import React from "react";
 import { Search, CreditCard, Bus, Phone } from "lucide-react";
 
 const BOOKING_STEPS = [
@@ -7,13 +6,13 @@ const BOOKING_STEPS = [
     title: "Recherchez votre trajet",
     description:
       "Sélectionnez votre ville de départ, d'arrivée et la date de voyage",
-    image: "src/statics/searchform.png",
+    image: "</section>src/assets/searchform.png",
   },
   {
     icon: CreditCard,
     title: "Réservez votre billet",
     description: "Choisissez votre siège et procédez au paiement sécurisé",
-    image: "src/statics/logove.jpg",
+    image: "src/assets/logove.jpg",
   },
   {
     icon: Bus,

@@ -21,7 +21,7 @@ const Footer = () => {
           <div>
             <div className="flex items-center space-x-3 mb-6">
               <img
-                src="src\statics\logove.jpg"
+                src="src\assets\logove.jpg"
                 alt="VoyageExpress Logo"
                 className="h-12 w-12 rounded-full object-cover"
               />

@@ -113,19 +113,19 @@ export const TOURIST_DESTINATIONS = [
 export const PARTNERS = [
   {
     name: "Général Voyage",
-    logo: "src/statics/logove.jpg",
+    logo: "src/assets/logove.jpg",
   },
   {
     name: "Garantie Express",
-    logo: "src/statics/logove.jpg",
+    logo: "src/assets/logove.jpg",
   },
   {
     name: "Touristique Express",
-    logo: "src/statics/logove.jpg",
+    logo: "src/assets/logove.jpg",
   },
   {
     name: "United Express",
-    logo: "src/statics/logove.jpg",
+    logo: "src/assets/logove.jpg",
   },
 ];
 

@@ -39,7 +39,8 @@ const Profile = ({ user }: ProfileProps) => {
   };
 
   const [isTravelHistoryVisible, setIsTravelHistoryVisible] = useState(false);
-  const [isEmailNotificationsEnabled, setIsEmailNotificationsEnabled] = useState(true);
+  const [isEmailNotificationsEnabled, setIsEmailNotificationsEnabled] =
+    useState(true);
 
   const handlePrivacySettingsChange = () => {
     // Here you would typically make an API call to update the user privacy settings
@@ -78,7 +79,11 @@ const Profile = ({ user }: ProfileProps) => {
       label: "Mauvais dépassements",
       icon: <AlertTriangle className="w-4 h-4" />,
     },
-    { id: "stops", label: "Trop d'arrêts", icon: <Clock className="w-4 h-4" /> },
+    {
+      id: "stops",
+      label: "Trop d'arrêts",
+      icon: <Clock className="w-4 h-4" />,
+    },
     {
       id: "comfort",
       label: "Manque de confort",
@@ -89,7 +94,11 @@ const Profile = ({ user }: ProfileProps) => {
       label: "Retard important",
       icon: <Clock className="w-4 h-4" />,
     },
-    { id: "other", label: "Autre", icon: <AlertTriangle className="w-4 h-4" /> },
+    {
+      id: "other",
+      label: "Autre",
+      icon: <AlertTriangle className="w-4 h-4" />,
+    },
   ];
 
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
@@ -118,7 +127,7 @@ const Profile = ({ user }: ProfileProps) => {
       time: "08:00",
       price: 5000,
       status: "upcoming",
-      agencyLogo: "/src/statics/logove.jpg",
+      agencyLogo: "/src/assets/logove.jpg",
     },
     {
       id: 2,
@@ -128,7 +137,7 @@ const Profile = ({ user }: ProfileProps) => {
       time: "10:00",
       price: 5000,
       status: "past",
-      agencyLogo: "/src/statics/logove.jpg",
+      agencyLogo: "/src/assets/logove.jpg",
     },
   ];
 
@@ -346,78 +355,78 @@ const Profile = ({ user }: ProfileProps) => {
         </button>
       </div>
 
-        <form className="space-y-4">
-          <div>
-            <label className="block text-sm text-gray-400 mb-1">
-              Mot de passe actuel
-            </label>
-            <input
-              type="password"
-              className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg 
+      <form className="space-y-4">
+        <div>
+          <label className="block text-sm text-gray-400 mb-1">
+            Mot de passe actuel
+          </label>
+          <input
+            type="password"
+            className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg 
                        text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
-              value={passwordData.currentPassword}
-              onChange={(e) =>
-                setPasswordData({
-                  ...passwordData,
-                  currentPassword: e.target.value,
-                })
-              }
-            />
-          </div>
+            value={passwordData.currentPassword}
+            onChange={(e) =>
+              setPasswordData({
+                ...passwordData,
+                currentPassword: e.target.value,
+              })
+            }
+          />
+        </div>
 
-          <div>
-            <label className="block text-sm text-gray-400 mb-1">
-              Nouveau mot de passe
-            </label>
-            <input
-              type="password"
-              className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg 
+        <div>
+          <label className="block text-sm text-gray-400 mb-1">
+            Nouveau mot de passe
+          </label>
+          <input
+            type="password"
+            className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg 
                        text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
-              value={passwordData.newPassword}
-              onChange={(e) =>
-                setPasswordData({
-                  ...passwordData,
-                  newPassword: e.target.value,
-                })
-              }
-            />
-          </div>
+            value={passwordData.newPassword}
+            onChange={(e) =>
+              setPasswordData({
+                ...passwordData,
+                newPassword: e.target.value,
+              })
+            }
+          />
+        </div>
 
-          <div>
-            <label className="block text-sm text-gray-400 mb-1">
-              Confirmer le mot de passe
-            </label>
-            <input
-              type="password"
-              className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg 
+        <div>
+          <label className="block text-sm text-gray-400 mb-1">
+            Confirmer le mot de passe
+          </label>
+          <input
+            type="password"
+            className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg 
                        text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
-              value={passwordData.confirmPassword}
-              onChange={(e) =>
-                setPasswordData({
-                  ...passwordData,
-                  confirmPassword: e.target.value,
-                })
-              }
-            />
-          </div>
+            value={passwordData.confirmPassword}
+            onChange={(e) =>
+              setPasswordData({
+                ...passwordData,
+                confirmPassword: e.target.value,
+              })
+            }
+          />
+        </div>
 
-          <div className="flex justify-end gap-3">
-            <button
-              type="button"
-              onClick={() => setIsEditingPassword(false)}
-              className="px-4 py-2 text-gray-400 hover:text-gray-300"
-            >
-              Annuler
-            </button>
-            <button
-              type="submit"
-              onClick={handleChangePassword}
-              className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600"
-            >
-              Sauvegarder
-            </button>
-          </div>
-        </form>
+        <div className="flex justify-end gap-3">
+          <button
+            type="button"
+            onClick={() => setIsEditingPassword(false)}
+            className="px-4 py-2 text-gray-400 hover:text-gray-300"
+          >
+            Annuler
+          </button>
+          <button
+            type="submit"
+            onClick={handleChangePassword}
+            className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600"
+          >
+            Sauvegarder
+          </button>
+        </div>
+      </form>
     </div>
   );
 
@@ -825,7 +834,6 @@ const Profile = ({ user }: ProfileProps) => {
                   animate={{ opacity: 1, x: 0 }}
                   className="space-y-6"
                 >
-
                   {/* Quick Stats */}
                   <div className="bg-gray-900/50 backdrop-blur-xl rounded-xl border border-gray-800/50 p-6">
                     <h3 className="text-lg font-semibold text-white mb-4">

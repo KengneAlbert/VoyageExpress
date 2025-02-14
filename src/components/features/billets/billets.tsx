@@ -38,7 +38,7 @@ const MOCK_TICKETS: Ticket[] = [
     seatNumber: "A12",
     isVip: true,
     bookingReference: "VE-2024031501",
-    logo: "src/statics/logove.jpg",
+    logo: "src/assets/logove.jpg",
   },
   // Add more mock tickets...
 ];

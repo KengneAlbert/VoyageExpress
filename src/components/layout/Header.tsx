@@ -63,7 +63,7 @@ const Header = () => {
           {/* Logo and Brand */}
           <Link to="/" className="flex items-center space-x-3 min-w-[200px]">
             <img
-              src="/src/statics/logove.jpg"
+              src="/src/assets/logove.jpg"
               alt="Logo"
               className="h-10 w-10 sm:h-12 sm:w-12 rounded-full object-cover border-2 border-orange-500"
             />
@@ -198,7 +198,7 @@ const Header = () => {
                         <UserCircle className="h-4 w-4" />
                         Mon profil
                       </Link>
-                      
+
                       <Link
                         to="/settings"
                         className="w-full px-4 py-2 text-sm text-gray-300 hover:text-white 

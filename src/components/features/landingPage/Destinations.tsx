@@ -1,11 +1,23 @@
-import React, { useState } from 'react';
-import { TOURIST_DESTINATIONS } from '../../../utils/constants';
-import { MapPin, ChevronDown, ChevronUp } from 'lucide-react';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { MapPin, ChevronDown, ChevronUp } from "lucide-react";
 import { motion } from "framer-motion";
+import { DESTINATIONS } from "../destinations/destinationData"; // Mise à jour de l'import
 
 const Destinations = () => {
   const [showAll, setShowAll] = useState(false);
-  const displayedDestinations = showAll ? TOURIST_DESTINATIONS : TOURIST_DESTINATIONS.slice(0, 3);
+  const navigate = useNavigate();
+  const displayedDestinations = showAll
+    ? DESTINATIONS
+    : DESTINATIONS.slice(0, 3);
+
+  const handleExploreMore = () => {
+    navigate("/destinations");
+  };
+
+  const handleDestinationClick = (id: number) => {
+    navigate(`/destinations/${id}`);
+  };
 
   return (
     <section className="py-24 bg-gray-800">
@@ -15,7 +27,7 @@ const Destinations = () => {
         viewport={{ once: true }}
         className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
       >
-        <motion.div 
+        <motion.div
           initial={{ y: 20, opacity: 0 }}
           whileInView={{ y: 0, opacity: 1 }}
           viewport={{ once: true }}
@@ -25,24 +37,26 @@ const Destinations = () => {
             Destinations <span className="text-orange-400">Touristiques</span>
           </h2>
           <p className="text-gray-400 max-w-2xl mx-auto">
-            Découvrez les merveilles du Cameroun à travers nos destinations les plus prisées
+            Découvrez les merveilles du Cameroun à travers nos destinations les
+            plus prisées
           </p>
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {displayedDestinations.map((destination, index) => (
             <motion.div
-              key={destination.name}
+              key={destination.id} // Mise à jour de la key
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.2 }}
               whileHover={{ scale: 1.05 }}
-              className="bg-gray-900 rounded-lg overflow-hidden group hover:shadow-xl transition-all duration-300"
+              className="bg-gray-900 rounded-lg overflow-hidden group hover:shadow-xl transition-all duration-300 cursor-pointer"
+              onClick={() => handleDestinationClick(destination.id)}
             >
               <div className="relative h-64 overflow-hidden">
                 <img
-                  src={destination.image}
+                  src={destination.images[0]} // Mise à jour du chemin de l'image
                   alt={destination.name}
                   className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-300"
                 />
@@ -55,14 +69,18 @@ const Destinations = () => {
               <div className="p-6">
                 <p className="text-gray-300 mb-4">{destination.description}</p>
                 <div className="flex flex-wrap gap-2">
-                  {destination.attractions.map((attraction) => (
-                    <span
-                      key={attraction}
-                      className="px-3 py-1 bg-orange-400/10 text-orange-400 rounded-full text-sm"
-                    >
-                      {attraction}
-                    </span>
-                  ))}
+                  {destination.highlights.map(
+                    (
+                      highlight // Mise à jour pour utiliser highlights
+                    ) => (
+                      <span
+                        key={highlight}
+                        className="px-3 py-1 bg-orange-400/10 text-orange-400 rounded-full text-sm"
+                      >
+                        {highlight}
+                      </span>
+                    )
+                  )}
                 </div>
               </div>
             </motion.div>
@@ -71,11 +89,15 @@ const Destinations = () => {
 
         <div className="mt-12 text-center">
           <button
-            onClick={() => setShowAll(!showAll)}
+            onClick={handleExploreMore}
             className="inline-flex items-center space-x-2 px-6 py-3 bg-orange-400 text-white rounded-md hover:bg-orange-500 transition-colors duration-200"
           >
-            <span>{showAll ? 'Voir moins' : 'Voir plus'}</span>
-            {showAll ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+            <span>{showAll ? "Voir moins" : "Voir plus"}</span>
+            {showAll ? (
+              <ChevronUp className="w-5 h-5" />
+            ) : (
+              <ChevronDown className="w-5 h-5" />
+            )}
           </button>
         </div>
       </motion.div>

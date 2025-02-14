@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import PhoneMockup from "../../../assets/images/phone_mockup.png";
 
 const DownloadApp = () => {
   return (
@@ -6,12 +7,12 @@ const DownloadApp = () => {
       <div className="max-w-7xl mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           {/* Left Content */}
-          <motion.div
+            <motion.div
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             className="space-y-8"
-          >
+            >
             <h2 className="text-4xl font-bold text-white">
               Téléchargez notre application mobile
             </h2>
@@ -22,35 +23,35 @@ const DownloadApp = () => {
             <div className="flex flex-col sm:flex-row gap-4">
               {/* Play Store Button */}
               <motion.a
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                href="#"
-                className="flex items-center justify-center bg-white/10 hover:bg-white/20 
-                         backdrop-blur-md rounded-xl px-6 py-3"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              href="#"
+              className="flex items-center justify-center bg-white/10 hover:bg-white/20 
+                   backdrop-blur-md rounded-xl px-6 py-3"
               >
-                <img
-                  src="src\statics\images\playstore.png"
-                  alt="Get it on Play Store"
-                  className="h-8"
-                />
+              <img
+                src="https://play.google.com/intl/en_us/badges/static/images/badges/fr_badge_web_generic.png"
+                alt="Get it on Play Store"
+                className="h-8"
+              />
               </motion.a>
 
               {/* App Store Button */}
               <motion.a
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                href="#"
-                className="flex items-center justify-center bg-white/10 hover:bg-white/20 
-                         backdrop-blur-md rounded-xl px-6 py-3"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              href="#"
+              className="flex items-center justify-center bg-white/10 hover:bg-white/20 
+                   backdrop-blur-md rounded-xl px-6 py-3"
               >
-                <img
-                  src="src\statics\images\appstore.png"
-                  alt="Download on App Store"
-                  className="h-8"
-                />
+              <img
+                src="https://developer.apple.com/app-store/marketing/guidelines/images/badge-download-on-the-app-store.svg"
+                alt="Download on App Store"
+                className="h-8"
+              />
               </motion.a>
             </div>
-          </motion.div>
+            </motion.div>
 
           {/* Right Content - Phone Mockup */}
           <motion.div
@@ -61,7 +62,7 @@ const DownloadApp = () => {
           >
             <div className="relative z-10">
               <img
-                src="src\statics\images\phone_mockup.png"
+                src={PhoneMockup}
                 alt="VoyageExpress Mobile App"
                 className="w-full max-w-[300px] mx-auto"
               />

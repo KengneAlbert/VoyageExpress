@@ -12,9 +12,12 @@ import MyTickets from "./components/features/billets/billets";
 import BookingForm from "./components/features/booking/BookingForm";
 import Payment from "./components/features/payment/Payment";
 import DownloadApp from "./components/features/landingPage/DownloadApp";
-// import PaymentSuccess from "./components/features/booking/PaymentSuccess";
-// import { motion } from "framer-motion";
+import AgencyDetails from "./components/features/agences/AgencyDetails";
+import PaymentSuccess from "./components/features/payment/PaymentSuccess";
+import TouristDestinations from "./components/features/destinations/Destinations";
+import DestinationDetails from "./components/features/destinations/DestinationDetails";
 import "react-lazy-load-image-component/src/effects/blur.css";
+import About from "./components/features/landingPage/About";
 
 // Lazy loading des composants majeurs
 const Hero = React.lazy(() => import("./components/features/landingPage/Hero"));
@@ -24,7 +27,7 @@ const BookingSteps = React.lazy(
 const TopDestinations = React.lazy(
   () => import("./components/features/landingPage/TopDestinations")
 );
-const Destinations = React.lazy(
+const LandingDestinations = React.lazy(
   () => import("./components/features/landingPage/Destinations")
 );
 const Testimonials = React.lazy(
@@ -38,8 +41,22 @@ const Newsletter = React.lazy(
 );
 const Footer = React.lazy(() => import("./components/layout/Footer"));
 
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  photoURL: string;
+}
+
+const DestinationRoutes = () => (
+  <Routes>
+    <Route path="/" element={<TouristDestinations />} />
+    <Route path="/:id" element={<DestinationDetails />} />
+  </Routes>
+);
+
 function App() {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     // Simulate fetching user data after login
@@ -64,9 +81,10 @@ function App() {
             element={
               <Suspense fallback={<div>Loading...</div>}>
                 <Hero />
+                <About />
                 <BookingSteps />
                 <TopDestinations />
-                <Destinations />
+                <LandingDestinations />
                 <DownloadApp />
                 <Testimonials />
                 <Partners />
@@ -79,13 +97,21 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/agences" element={<AgenciesPage />} />
+          <Route path="/agences/:id" element={<AgencyDetails />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/aide" element={<Help />} />
           <Route path="/mes-billets" element={<MyTickets />} />
-          <Route path="/profile" element={<Profile user={user} />} />
+          <Route
+            path="/profile"
+            element={user ? <Profile user={user} /> : <div>Loading...</div>}
+          />
           <Route path="/booking" element={<BookingForm />} />
           <Route path="/payment" element={<Payment />} />
-          {/* <Route path="/payment-success" element={<PaymentSuccess />} /> */}
+          <Route
+            path="/payment-success"
+            element={<PaymentSuccess replace={true} />}
+          />
+          <Route path="/destinations/*" element={<DestinationRoutes />} />
         </Routes>
       </div>
     </Router>

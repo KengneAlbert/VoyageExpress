@@ -12,10 +12,10 @@ import {
 } from "lucide-react";
 
 // Payment method icons
-import orangeMoneyLogo from "../../../statics/images/orange_money.jpg";
-import mtnMoneyLogo from "../../../statics/images/mtn-momo.png";
-import stripeLogo from "../../../statics/images/playstore.png";
-import paypalLogo from "../../../statics/images/playstore.png";
+import orangeMoneyLogo from "../../../assets/images/orange_money.jpg";
+import mtnMoneyLogo from "../../../assets/images/mtn-momo.png";
+import stripeLogo from "../../../assets/images/playstore.png";
+import paypalLogo from "../../../assets/images/playstore.png";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import StripeForm from "./StripeForm";
@@ -78,11 +78,26 @@ const Payment = () => {
     setIsProcessing(true);
 
     try {
-      // Simulate payment processing
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      navigate("/payment-success");
+      // Correction du formatage de la date
+      const formattedBookingData = {
+        ...bookingData,
+        trip: {
+          ...bookingData.trip,
+          date: bookingData.trip.date ? new Date(bookingData.trip.date).toISOString() : new Date().toISOString()
+        }
+      };
+
+      // Simulation du délai de paiement
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Navigation vers la page de succès
+      navigate('/payment-success', {
+        state: { bookingData: formattedBookingData },
+        replace: true
+      });
     } catch (error) {
       console.error("Payment failed:", error);
+      // Gestion des erreurs si nécessaire
     } finally {
       setIsProcessing(false);
     }
@@ -231,9 +246,10 @@ const Payment = () => {
                   whileHover={{ scale: 1.01 }}
                   whileTap={{ scale: 0.99 }}
                   type="submit"
-                  disabled={isProcessing}
+                  disabled={isProcessing || !formData.phoneNumber}
                   className="w-full py-3 px-4 bg-gradient-to-r from-orange-500 to-orange-600 
-                          rounded-lg text-white font-medium shadow-lg flex items-center justify-center gap-2"
+                          rounded-lg text-white font-medium shadow-lg flex items-center justify-center gap-2
+                          disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isProcessing ? (
                     <>
