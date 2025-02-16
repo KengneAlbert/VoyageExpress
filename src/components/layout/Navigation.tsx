@@ -6,7 +6,7 @@ const navigationItems = [
   { path: '/', label: 'Accueil' },
   { path: '/agences', label: 'Agences' },
   { path: '/destinations', label: 'Destinations' },
-  { path: '/mes-billets', label: 'Mes Billets' },
+  // { path: '/mes-billets', label: 'Mes Billets' },
   { path: '/contact', label: 'Contact' },
   { path: '/aide', label: 'Aide' }
 ];

@@ -12,7 +12,18 @@ import {
   Star,
   X,
   AlertTriangle,
+  Shield,
+  Lock,
+  Ticket,
+  Bell,
 } from "lucide-react";
+import SecurityTab from "./SecurityTab";
+import PrivacyTab from "./PrivacyTab";
+import NotificationsTab from "./NotificationsTab";
+import RatingTab from "./RatingTab";
+import PromoCodesTab from "./PromoCodesTab";
+import { Tabs } from "../../ui/Tabs"; // Ajoutez cet import
+import { useNotifications } from "../../../context/NotificationsContext";
 
 interface ProfileProps {
   user: {
@@ -23,7 +34,52 @@ interface ProfileProps {
   };
 }
 
+interface EditedData {
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+  profilePicture: string;
+}
+
+const TABS = [
+  {
+    id: "profile",
+    label: "Profile",
+    icon: UserCircle,
+  },
+  {
+    id: "security",
+    label: "Sécurité",
+    icon: Shield,
+  },
+  {
+    id: "privacy",
+    label: "Confidentialité",
+    icon: Lock,
+  },
+  {
+    id: "rating",
+    label: "Évaluations",
+    icon: Star,
+    badge: "", // Optionnel: nombre d'évaluations en attente
+  },
+  {
+    id: "promo",
+    label: "Codes Promo",
+    icon: Ticket,
+    badge: "2", // Optionnel: nombre de codes disponibles
+  },
+  {
+    id: "notifications",
+    label: "Notifications",
+    icon: Bell,
+    badge: "4", // Optionnel: nombre de notifications non lues
+  },
+];
+
 const Profile = ({ user }: ProfileProps) => {
+  const { showNotification } = useNotifications();
   const [activeTab, setActiveTab] = useState("profile"); // 'profile', 'security', 'privacy'
   const [isEditingPassword, setIsEditingPassword] = useState(false);
   const [passwordData, setPasswordData] = useState({
@@ -342,184 +398,6 @@ const Profile = ({ user }: ProfileProps) => {
     </AnimatePresence>
   );
 
-  const renderSecuritySettings = () => (
-    <div className="bg-gray-900/50 backdrop-blur-xl rounded-xl border border-gray-800/50 p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h3 className="text-lg font-semibold text-white">Sécurité</h3>
-        <button
-          onClick={() => setIsEditingPassword(!isEditingPassword)}
-          className="text-orange-400 hover:text-orange-300 flex items-center gap-2"
-        >
-          <Edit className="w-4 h-4" />
-          <span>Changer le mot de passe</span>
-        </button>
-      </div>
-
-      <form className="space-y-4">
-        <div>
-          <label className="block text-sm text-gray-400 mb-1">
-            Mot de passe actuel
-          </label>
-          <input
-            type="password"
-            className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg 
-                       text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
-            value={passwordData.currentPassword}
-            onChange={(e) =>
-              setPasswordData({
-                ...passwordData,
-                currentPassword: e.target.value,
-              })
-            }
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm text-gray-400 mb-1">
-            Nouveau mot de passe
-          </label>
-          <input
-            type="password"
-            className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg 
-                       text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
-            value={passwordData.newPassword}
-            onChange={(e) =>
-              setPasswordData({
-                ...passwordData,
-                newPassword: e.target.value,
-              })
-            }
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm text-gray-400 mb-1">
-            Confirmer le mot de passe
-          </label>
-          <input
-            type="password"
-            className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700 rounded-lg 
-                       text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
-            value={passwordData.confirmPassword}
-            onChange={(e) =>
-              setPasswordData({
-                ...passwordData,
-                confirmPassword: e.target.value,
-              })
-            }
-          />
-        </div>
-
-        <div className="flex justify-end gap-3">
-          <button
-            type="button"
-            onClick={() => setIsEditingPassword(false)}
-            className="px-4 py-2 text-gray-400 hover:text-gray-300"
-          >
-            Annuler
-          </button>
-          <button
-            type="submit"
-            onClick={handleChangePassword}
-            className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600"
-          >
-            Sauvegarder
-          </button>
-        </div>
-      </form>
-    </div>
-  );
-
-  const renderPrivacySettings = () => (
-    <div className="space-y-6">
-      <div className="bg-gray-900/50 backdrop-blur-xl rounded-xl border border-gray-800/50 p-6">
-        <h3 className="text-lg font-semibold text-white mb-4">
-          Confidentialité
-        </h3>
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-300">Historique des voyages visible</p>
-              <p className="text-sm text-gray-400">
-                Autoriser les autres à voir votre historique
-              </p>
-            </div>
-            <div>
-              <p className="text-gray-300">Historique des voyages visible</p>
-              <p className="text-sm text-gray-400">
-                Autoriser les autres à voir votre historique
-              </p>
-            </div>
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input
-                type="checkbox"
-                className="sr-only peer"
-                checked={isTravelHistoryVisible}
-                onChange={() => {
-                  setIsTravelHistoryVisible(!isTravelHistoryVisible);
-                  handlePrivacySettingsChange();
-                }}
-              />
-              <div
-                className="w-11 h-6 bg-gray-700 rounded-full peer peer-checked:after:translate-x-full 
-                          peer-checked:bg-orange-500 after:content-[''] after:absolute after:top-0.5 
-                          after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 
-                          after:transition-all"
-              ></div>
-            </label>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-300">Notifications par email</p>
-              <p className="text-sm text-gray-400">
-                Recevoir des notifications sur vos réservations
-              </p>
-            </div>
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input
-                type="checkbox"
-                className="sr-only peer"
-                checked={isEmailNotificationsEnabled}
-                onChange={() => {
-                  setIsEmailNotificationsEnabled(!isEmailNotificationsEnabled);
-                  handlePrivacySettingsChange();
-                }}
-                defaultChecked
-              />
-              <div
-                className="w-11 h-6 bg-gray-700 rounded-full peer peer-checked:after:translate-x-full 
-                          peer-checked:bg-orange-500 after:content-[''] after:absolute after:top-0.5 
-                          after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 
-                          after:transition-all"
-              ></div>
-            </label>
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-gray-900/50 backdrop-blur-xl rounded-xl border border-gray-800/50 p-6">
-        <h3 className="text-lg font-semibold text-white mb-4">
-          Données personnelles
-        </h3>
-        <div className="space-y-4">
-          <p className="text-gray-400">
-            Vous pouvez demander une copie de vos données personnelles ou leur
-            suppression.
-          </p>
-          <div className="flex gap-4">
-            <button className="px-4 py-2 text-orange-400 hover:text-orange-300">
-              Exporter mes données
-            </button>
-            <button className="px-4 py-2 text-red-400 hover:text-red-300">
-              Supprimer mon compte
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
   const renderPersonalInfo = () => (
     <div className="bg-gray-900/50 backdrop-blur-xl rounded-xl border border-gray-800/50 p-6">
       <div className="flex justify-between items-center mb-6">
@@ -744,6 +622,52 @@ const Profile = ({ user }: ProfileProps) => {
     </div>
   );
 
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case "security":
+        return <SecurityTab />;
+      case "privacy":
+        return <PrivacyTab />;
+      case "notifications":
+        return <NotificationsTab />;
+      case "rating":
+        return <RatingTab />;
+      case "promo":
+        return <PromoCodesTab />;
+      case "profile":
+      default:
+        return (
+          <div className="grid grid-cols-1 lg:grid-cols-[300px,1fr] gap-8">
+            {/* Quick Stats */}
+            <motion.div className="space-y-6">
+              {/* Next Trip Card */}
+              <div className="bg-gray-900/50 backdrop-blur-xl rounded-xl border border-gray-800/50 p-6">
+                <h3 className="text-lg font-semibold text-white mb-4">
+                  Statistiques
+                </h3>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-400">Voyages effectués</span>
+                    <span className="text-white font-medium">12</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-400">Points fidélité</span>
+                    <span className="text-orange-400 font-medium">350 pts</span>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Main Content */}
+            <motion.div>
+              {renderPersonalInfo()}
+              {renderRecentTravels()}
+            </motion.div>
+          </div>
+        );
+    }
+  };
+
   return (
     <div
       className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] 
@@ -798,23 +722,12 @@ const Profile = ({ user }: ProfileProps) => {
           </div>
 
           {/* Navigation Tabs */}
-          <div className="flex items-center gap-4 mt-8 border-t border-gray-800 pt-8">
-            {["Profile", "Sécurité", "Confidentialité"].map((tab) => (
-              <motion.button
-                key={tab}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setActiveTab(tab.toLowerCase())}
-                className={`px-4 py-2 rounded-xl transition-all ${
-                  activeTab === tab.toLowerCase()
-                    ? "bg-orange-500 text-white"
-                    : "text-gray-400 hover:text-white hover:bg-gray-800"
-                }`}
-              >
-                {tab}
-              </motion.button>
-            ))}
-          </div>
+          <Tabs
+            tabs={TABS}
+            activeTab={activeTab}
+            onChange={setActiveTab}
+            className="mt-8 border-t border-gray-800 pt-8"
+          />
         </motion.div>
 
         {/* Profile Content */}
@@ -826,50 +739,7 @@ const Profile = ({ user }: ProfileProps) => {
             exit={{ opacity: 0, y: -20 }}
             className="space-y-8"
           >
-            {activeTab === "profile" && (
-              <div className="grid grid-cols-1 lg:grid-cols-[300px,1fr] gap-8">
-                {/* Profile Sidebar */}
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  className="space-y-6"
-                >
-                  {/* Quick Stats */}
-                  <div className="bg-gray-900/50 backdrop-blur-xl rounded-xl border border-gray-800/50 p-6">
-                    <h3 className="text-lg font-semibold text-white mb-4">
-                      Statistiques
-                    </h3>
-                    <div className="space-y-4">
-                      <div className="flex justify-between items-center">
-                        <span className="text-gray-400">Voyages effectués</span>
-                        <span className="text-white font-medium">12</span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-gray-400">Points fidélité</span>
-                        <span className="text-orange-400 font-medium">
-                          350 pts
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-
-                {/* Main Content */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="space-y-6"
-                >
-                  {renderPersonalInfo()}
-
-                  {/* Recent Travels */}
-                  {renderRecentTravels()}
-                </motion.div>
-              </div>
-            )}
-
-            {activeTab === "security" && renderSecuritySettings()}
-            {activeTab === "privacy" && renderPrivacySettings()}
+            {renderTabContent()}
           </motion.div>
         </AnimatePresence>
       </div>

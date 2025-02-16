@@ -7,13 +7,11 @@ import {
   Calendar,
   ThermometerSun,
   Hotel,
-  Camera,
   Clock,
   Sun,
   Utensils,
   Car,
   Bus,
-  Bike,
   PartyPopper,
   Navigation,
   Share2,
@@ -26,10 +24,10 @@ import {
   CreditCard,
   CheckCircle,
   AlertCircle,
-  Search, 
+  Search,
 } from "lucide-react";
 import { DESTINATIONS } from "./destinationData";
-import { formatPrice, formatTime } from "../../../utils/formatDate";
+import ShareModal from "../../common/ShareModal";
 
 // Définition du type Bus localement pour éviter les problèmes d'import
 interface Bus {
@@ -182,6 +180,8 @@ const DestinationDetails: React.FC = () => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [passengers, setPassengers] = useState(1);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [shareCount, setShareCount] = useState(0);
 
   const destination = DESTINATIONS.find((d) => d.id === Number(id));
 
@@ -244,6 +244,16 @@ const DestinationDetails: React.FC = () => {
     );
   };
 
+  const shareUrl = window.location.href;
+  const shareTitle = destination
+    ? `Découvrez ${destination.name} sur VoyageExpress`
+    : "";
+
+  const handleShare = () => {
+    setShareCount((prev) => prev + 1);
+    // Vous pouvez ajouter ici une logique pour suivre les partages
+  };
+
   return (
     <div
       className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] 
@@ -276,9 +286,20 @@ const DestinationDetails: React.FC = () => {
             <motion.button
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
-              className="p-2 bg-gray-800 rounded-full"
+              onClick={() => setIsShareModalOpen(true)}
+              className="p-2 bg-gray-800 hover:bg-gray-700 rounded-full 
+                        transition-colors relative group"
             >
               <Share2 className="w-5 h-5" />
+              {shareCount > 0 && (
+                <span
+                  className="absolute -top-1 -right-1 text-xs bg-orange-500 
+                               text-white w-4 h-4 rounded-full flex items-center 
+                               justify-center"
+                >
+                  {shareCount}
+                </span>
+              )}
             </motion.button>
           </div>
         </div>
@@ -749,6 +770,17 @@ const DestinationDetails: React.FC = () => {
           </div>
         </div>
       </div>
+      <AnimatePresence>
+        {isShareModalOpen && (
+          <ShareModal
+            isOpen={isShareModalOpen}
+            onClose={() => setIsShareModalOpen(false)}
+            title={shareTitle}
+            url={shareUrl}
+            onShare={handleShare}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 };

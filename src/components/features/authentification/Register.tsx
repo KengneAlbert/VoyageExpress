@@ -81,7 +81,7 @@ const Register = () => {
                                ? "border-red-500"
                                : "border-gray-700 focus:border-orange-500"
                            }`}
-                    placeholder="John Doe"
+                    placeholder="Albert Kengne"
                   />
                   {errors.name && (
                     <motion.p

@@ -171,7 +171,7 @@ const Header = () => {
                 className="flex items-center gap-2 p-2 text-gray-300 hover:text-white rounded-lg hover:bg-gray-800/50 transition-colors"
               >
                 <UserCircle className="h-6 w-6" />
-                <span className="text-sm">John Doe</span>
+                <span className="text-sm">Albert Kengne</span>
               </button>
 
               {/* Dropdown Menu */}
@@ -185,7 +185,9 @@ const Header = () => {
                     className="absolute right-0 mt-2 w-48 bg-gray-900 rounded-xl border border-gray-800/50 shadow-xl py-1 z-50"
                   >
                     <div className="px-4 py-3 border-b border-gray-800">
-                      <p className="text-sm text-white font-medium">John Doe</p>
+                      <p className="text-sm text-white font-medium">
+                        Albert Kengne
+                      </p>
                       <p className="text-xs text-gray-400">john@example.com</p>
                     </div>
 
@@ -197,6 +199,15 @@ const Header = () => {
                       >
                         <UserCircle className="h-4 w-4" />
                         Mon profil
+                      </Link>
+
+                      <Link
+                        to="/mes-billets"
+                        className="w-full px-4 py-2 text-sm text-gray-300 hover:text-white 
+                                  hover:bg-gray-800 flex items-center gap-2"
+                      >
+                        <UserCircle className="h-4 w-4" />
+                        Mes Billets
                       </Link>
 
                       <Link

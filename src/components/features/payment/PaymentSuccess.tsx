@@ -157,18 +157,6 @@ const PaymentSuccess = () => {
     <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] 
                     from-orange-900/20 via-gray-900 to-gray-900 py-4 sm:py-8 md:pt-20 lg:pt-24 px-3 sm:px-4">
       <div className="max-w-3xl mx-auto">
-        {/* Back to home button - Ajusté pour mobile */}
-        <motion.div className="mb-4 sm:mb-8">
-          <button
-            onClick={() => navigate('/')}
-            className="inline-flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2 
-                     bg-gray-800/50 rounded-lg text-gray-400 hover:text-white 
-                     transition-colors group text-sm sm:text-base"
-          >
-            <Home className="w-4 h-4 sm:w-5 sm:h-5 group-hover:text-orange-400" />
-            <span>Retour à l'accueil</span>
-          </button>
-        </motion.div>
 
         {/* Success Message - Plus compact sur mobile */}
         <motion.div className="text-center mb-4 sm:mb-8 relative">

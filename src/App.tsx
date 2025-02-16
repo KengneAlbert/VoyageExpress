@@ -18,6 +18,7 @@ import TouristDestinations from "./components/features/destinations/Destinations
 import DestinationDetails from "./components/features/destinations/DestinationDetails";
 import "react-lazy-load-image-component/src/effects/blur.css";
 import About from "./components/features/landingPage/About";
+import { NotificationsProvider } from './context/NotificationsContext';
 
 // Lazy loading des composants majeurs
 const Hero = React.lazy(() => import("./components/features/landingPage/Hero"));
@@ -73,6 +74,7 @@ function App() {
 
   return (
     <Router>
+      <NotificationsProvider>
       <div className="min-h-screen bg-gray-900">
         <Header />
         <Routes>
@@ -114,6 +116,7 @@ function App() {
           <Route path="/destinations/*" element={<DestinationRoutes />} />
         </Routes>
       </div>
+      </NotificationsProvider>
     </Router>
   );
 }
