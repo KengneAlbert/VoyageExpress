@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import CityAutocomplete from "./CityAutocomplete";
 import { useNavigate } from "react-router-dom";
 import { DatePicker } from "../../common/DatePicker";
+import { useLazySearchTripsQuery, useGetCitiesQuery } from '../../../services/api/voyagesApi';
 
 interface SearchFormData {
   departure: string;
@@ -17,22 +18,22 @@ interface SearchFormProps {
 }
 
 const SearchForm: React.FC<SearchFormProps> = ({ defaultValues }) => {
-  // Modifier l'état initial pour inclure la date du jour
   const [formData, setFormData] = useState<SearchFormData>({
     ...defaultValues,
     date: new Date().toISOString().split('T')[0] // Format YYYY-MM-DD
   });
   const [errors, setErrors] = useState<Partial<SearchFormData>>({});
-  const [isSearching, setIsSearching] = useState(false);
   const [isPassengersOpen, setIsPassengersOpen] = useState(false);
   const navigate = useNavigate();
+
+  const { data: cities = [] } = useGetCitiesQuery();
+  const [searchTrips, { isLoading: isSearching }] = useLazySearchTripsQuery();
 
   const swapCities = (e: React.MouseEvent) => {
     e.preventDefault(); // Empêche le formulaire de se soumettre
     const prevDeparture = formData.departure;
     const prevDestination = formData.destination;
     
-    // Mise à jour directe sans utiliser le state précédent
     setFormData({
       ...formData,
       departure: prevDestination,
@@ -72,22 +73,23 @@ const SearchForm: React.FC<SearchFormProps> = ({ defaultValues }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (validateForm()) {
-      setIsSearching(true);
       try {
-        console.log('Form data being sent:', formData);
-        
-        await new Promise(resolve => setTimeout(resolve, 1000)); // Simulation d'un appel API
+        const results = await searchTrips({
+          departure: formData.departure,
+          destination: formData.destination,
+          date: formData.date,
+          passengers: formData.passengers
+        }).unwrap();
         
         navigate('/search-results', {
           state: {
-            searchData: formData
+            searchData: formData,
+            searchResults: results
           }
         });
       } catch (error) {
         console.error('Error during search:', error);
-        // Ajouter ici la gestion des erreurs si nécessaire
-      } finally {
-        setIsSearching(false);
+        // Handle error state here
       }
     }
   };
@@ -122,7 +124,7 @@ const SearchForm: React.FC<SearchFormProps> = ({ defaultValues }) => {
                 onClick={swapCities}
                 className="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center
                          shadow-lg hover:bg-orange-600 transition-colors z-20 cursor-pointer
-                         focus:outline-none focus:ring-2 focus:ring-orange-500" // Ajout focus states
+                         focus:outline-none focus:ring-2 focus:ring-orange-500"
               >
                 <ArrowLeftRight className="w-5 h-5 text-white" />
               </button>
@@ -137,7 +139,7 @@ const SearchForm: React.FC<SearchFormProps> = ({ defaultValues }) => {
                   onClick={swapCities}
                   className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center
                            shadow-lg hover:bg-orange-600 transition-colors cursor-pointer
-                           focus:outline-none focus:ring-2 focus:ring-orange-500" // Ajout focus states
+                           focus:outline-none focus:ring-2 focus:ring-orange-500"
                 >
                   <ArrowLeftRight className="w-4 h-4 text-white" />
                 </button>

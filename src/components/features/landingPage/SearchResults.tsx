@@ -6,69 +6,26 @@ import Header from "../../layout/Header";
 import SearchForm from "../resultSearch/SearchResultForm";
 import FilterBar from "../resultSearch/FilterBar";
 import TripCard from "../resultSearch/TripResultCard";
-
-const trips = [
-  {
-    id: "1",
-    agency: "Bluebird Express",
-    price: 10000,
-    availableSeats: 20,
-    isVip: true,
-    departure: { point: "Mvan, Yaoundé", city: "Yaoundé" },
-    destination: { point: "Djadam, Bafoussam", city: "Bafoussam" },
-    departureTime: "17:00",
-    arrivalTime: "20:00",
-    logo: "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?fit=crop&w=64&h=64",
-  },
-  {
-    id: "2",
-    agency: "General Express",
-    price: 5000,
-    availableSeats: 20,
-    isVip: false,
-    departure: { point: "Brazaville, Douala", city: "Douala" },
-    destination: { point: "Mvan, Yaoundé", city: "Yaoundé" },
-    departureTime: "17:00",
-    arrivalTime: "20:00",
-    logo: "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?fit=crop&w=64&h=64",
-  },
-  {
-    id: "3",
-    agency: "Maryland",
-    price: 10000,
-    availableSeats: 20,
-    isVip: true,
-    departure: { point: "Mvan, Yaoundé", city: "Yaoundé" },
-    destination: { point: "Djadam, Bafoussam", city: "Bafoussam" },
-    departureTime: "17:00",
-    arrivalTime: "20:00",
-    logo: "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?fit=crop&w=64&h=64",
-  },
-  {
-    id: "4",
-    agency: "United Express",
-    price: 5000,
-    availableSeats: 20,
-    isVip: false,
-    departure: { point: "Brazaville, Douala", city: "Douala" },
-    destination: { point: "Mvan, Yaoundé", city: "Yaoundé" },
-    departureTime: "17:00",
-    arrivalTime: "20:00",
-    logo: "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?fit=crop&w=64&h=64",
-  },
-];
+import { useSearchTripsQuery } from "../../../services/api/voyagesApi";
 
 const SearchResults = () => {
   const location = useLocation();
   const searchData = location.state?.searchData;
 
-  console.log('Search Data received:', searchData);
+  const { 
+    data: trips = [], 
+    isLoading, 
+    error,
+    refetch 
+  } = useSearchTripsQuery(searchData, {
+    skip: !searchData
+  });
 
   const defaultValues = location.state?.searchData || {
     departure: "",
     destination: "",
     date: "",
-    passengers: 1
+    passengers: 1,
   };
 
   const [sortType, setSortType] = useState("");
@@ -77,7 +34,6 @@ const SearchResults = () => {
     time?: string;
     agency?: string;
   }>({});
-  const [isLoading, setIsLoading] = useState(false);
 
   const sortedTrips = useMemo(() => {
     const sorted = [...trips];
@@ -104,9 +60,11 @@ const SearchResults = () => {
   }, [trips, sortType]);
 
   const handleFilterChange = (filters: typeof activeFilters) => {
-    setIsLoading(true);
     setActiveFilters(filters);
-    setTimeout(() => setIsLoading(false), 500);
+  };
+
+  const handleSearch = async (newSearchData: typeof defaultValues) => {
+    await refetch();
   };
 
   return (
@@ -148,6 +106,21 @@ const SearchResults = () => {
                       className="h-48 bg-gray-800/50 rounded-xl animate-pulse"
                     />
                   ))}
+                </motion.div>
+              ) : error ? (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="flex flex-col items-center justify-center py-12 text-center"
+                >
+                  <Search className="h-12 w-12 text-gray-600 mb-4" />
+                  <h3 className="text-xl font-medium text-white mb-2">
+                    Une erreur s'est produite
+                  </h3>
+                  <p className="text-gray-400">
+                    Veuillez réessayer plus tard
+                  </p>
                 </motion.div>
               ) : trips.length > 0 ? (
                 <motion.div
