@@ -1,3 +1,28 @@
+export interface City {
+  id: string;
+  name: string;
+  postal_code?: string;
+  country?: string;
+}
+
+export interface Point {
+  id: string;
+  detail?: string;
+  address: string;
+  agency?: string;
+  city?: City;
+}
+
+export interface Route {
+  id: string;
+  description?: string;
+  distance?: number;
+  departure: Point;
+  arrived: Point;
+  duration?: string;
+  image_url?: string;
+}
+
 export interface Agency {
   id: string;
   name: string;

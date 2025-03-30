@@ -74,12 +74,17 @@ const SearchForm: React.FC<SearchFormProps> = ({ defaultValues }) => {
     e.preventDefault();
     if (validateForm()) {
       try {
-        const results = await searchTrips(formData).unwrap();
+        const results = await searchTrips({
+          departure: formData.departure,
+          destination: formData.destination,
+          date: formData.date,
+          passengers: formData.passengers
+        }).unwrap();
         
         navigate('/search-results', {
           state: {
             searchData: formData,
-            results
+            searchResults: results
           }
         });
       } catch (error) {

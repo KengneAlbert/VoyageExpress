@@ -1,17 +1,17 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import type { SearchParams, TripSearchResponse } from './types';
+import type { SearchParams, TripSearchResponse, Agency, City, Route } from './types';
 
 export const voyagesApi = createApi({
   reducerPath: 'voyagesApi',
   baseQuery: fetchBaseQuery({ 
     baseUrl: 'http://localhost:8000/api/',
-    // Add any default headers or auth logic here
+    credentials: 'include',
   }),
+  tagTypes: ['Trips', 'Cities', 'Agencies', 'Routes'],
   endpoints: (builder) => ({
     searchTrips: builder.query<TripSearchResponse[], SearchParams>({
       query: (params) => ({
         url: 'trips/search',
-        method: 'GET',
         params: {
           departure_city: params.departure,
           destination_city: params.destination,
@@ -19,14 +19,32 @@ export const voyagesApi = createApi({
           passengers: params.passengers,
         },
       }),
+      providesTags: ['Trips'],
     }),
     
-    getPopularRoutes: builder.query<TripSearchResponse[], void>({
+    getPopularRoutes: builder.query<Route[], void>({
       query: () => 'trips/popular',
+      providesTags: ['Routes'],
     }),
 
-    getCities: builder.query<string[], void>({
-      query: () => 'cities',
+    getCities: builder.query<City[], void>({
+      query: () => 'cities/',
+      providesTags: ['Cities'],
+    }),
+
+    getAgencies: builder.query<Agency[], void>({
+      query: () => 'agencies/',
+      providesTags: ['Agencies'],
+    }),
+
+    getRoutesByCity: builder.query<Route[], string>({
+      query: (cityId) => `routes/?city=${cityId}`,
+      providesTags: ['Routes'],
+    }),
+
+    getTripById: builder.query<TripSearchResponse, string>({
+      query: (id) => `trips/${id}/`,
+      providesTags: (_result, _err, id) => [{ type: 'Trips', id }],
     }),
   }),
 });
@@ -36,4 +54,7 @@ export const {
   useLazySearchTripsQuery,
   useGetPopularRoutesQuery,
   useGetCitiesQuery,
+  useGetAgenciesQuery,
+  useGetRoutesByCityQuery,
+  useGetTripByIdQuery,
 } = voyagesApi;

@@ -12,8 +12,13 @@ const SearchResults = () => {
   const location = useLocation();
   const searchData = location.state?.searchData;
 
-  const { data: trips = [], isLoading, error } = useSearchTripsQuery(searchData, {
-    skip: !searchData,
+  const { 
+    data: trips = [], 
+    isLoading, 
+    error,
+    refetch 
+  } = useSearchTripsQuery(searchData, {
+    skip: !searchData
   });
 
   const defaultValues = location.state?.searchData || {
@@ -56,6 +61,10 @@ const SearchResults = () => {
 
   const handleFilterChange = (filters: typeof activeFilters) => {
     setActiveFilters(filters);
+  };
+
+  const handleSearch = async (newSearchData: typeof defaultValues) => {
+    await refetch();
   };
 
   return (

@@ -19,6 +19,8 @@ import DestinationDetails from "./components/features/destinations/DestinationDe
 import "react-lazy-load-image-component/src/effects/blur.css";
 import About from "./components/features/landingPage/About";
 import { NotificationsProvider } from './context/NotificationsContext';
+import { Provider } from 'react-redux';
+import { store } from './app/store';
 
 // Lazy loading des composants majeurs
 const Hero = React.lazy(() => import("./components/features/landingPage/Hero"));
@@ -73,51 +75,53 @@ function App() {
   }, []);
 
   return (
-    <Router>
-      <NotificationsProvider>
-      <div className="min-h-screen bg-gray-900">
-        <Header />
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <Suspense fallback={<div>Loading...</div>}>
-                <Hero />
-                <About />
-                <BookingSteps />
-                <TopDestinations />
-                <LandingDestinations />
-                <DownloadApp />
-                <Testimonials />
-                <Partners />
-                <Newsletter />
-                <Footer />
-              </Suspense>
-            }
-          />
-          <Route path="/search-results" element={<SearchResults />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/agences" element={<AgenciesPage />} />
-          <Route path="/agences/:id" element={<AgencyDetails />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/aide" element={<Help />} />
-          <Route path="/mes-billets" element={<MyTickets />} />
-          <Route
-            path="/profile"
-            element={user ? <Profile user={user} /> : <div>Loading...</div>}
-          />
-          <Route path="/booking" element={<BookingForm />} />
-          <Route path="/payment" element={<Payment />} />
-          <Route
-            path="/payment-success"
-            element={<PaymentSuccess replace={true} />}
-          />
-          <Route path="/destinations/*" element={<DestinationRoutes />} />
-        </Routes>
-      </div>
-      </NotificationsProvider>
-    </Router>
+    <Provider store={store}>
+      <Router>
+        <NotificationsProvider>
+          <div className="min-h-screen bg-gray-900">
+            <Header />
+            <Routes>
+              <Route
+                path="/"
+                element={
+                  <Suspense fallback={<div>Loading...</div>}>
+                    <Hero />
+                    <About />
+                    <BookingSteps />
+                    <TopDestinations />
+                    <LandingDestinations />
+                    <DownloadApp />
+                    <Testimonials />
+                    <Partners />
+                    <Newsletter />
+                    <Footer />
+                  </Suspense>
+                }
+              />
+              <Route path="/search-results" element={<SearchResults />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/agences" element={<AgenciesPage />} />
+              <Route path="/agences/:id" element={<AgencyDetails />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/aide" element={<Help />} />
+              <Route path="/mes-billets" element={<MyTickets />} />
+              <Route
+                path="/profile"
+                element={user ? <Profile user={user} /> : <div>Loading...</div>}
+              />
+              <Route path="/booking" element={<BookingForm />} />
+              <Route path="/payment" element={<Payment />} />
+              <Route
+                path="/payment-success"
+                element={<PaymentSuccess replace={true} />}
+              />
+              <Route path="/destinations/*" element={<DestinationRoutes />} />
+            </Routes>
+          </div>
+        </NotificationsProvider>
+      </Router>
+    </Provider>
   );
 }
 
