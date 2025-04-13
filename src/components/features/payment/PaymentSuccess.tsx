@@ -31,7 +31,9 @@ interface Passenger {
 
 interface TripDetails {
   logo: string;
-  agency: string;
+  agency: {
+    name: string;
+  }
   departure: {
     city: string;
   };
@@ -362,12 +364,12 @@ const PaymentSuccess = () => {
                 <div className="flex items-center gap-2 sm:gap-4">
                   <img
                     src={bookingData.trip.logo}
-                    alt={bookingData.trip.agency}
+                    alt={bookingData.trip.agency?.name}
                     className="w-10 h-10 sm:w-16 sm:h-16 rounded-lg object-cover"
                   />
                   <div>
                     <h2 className="text-base sm:text-xl font-bold text-white">
-                      {bookingData.trip.agency}
+                      {bookingData.trip.agency?.name}
                     </h2>
                     <div className="flex items-center gap-1 sm:gap-2 text-orange-400">
                       <Bus className="w-3 h-3 sm:w-4 sm:h-4" />

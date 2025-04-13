@@ -1,31 +1,29 @@
-import React, { useState, useEffect, useRef, ReactElement } from 'react';
-import { useDebounce } from 'use-debounce';
-import { CITIES } from '../../../utils/constants';
+import React, { useState, useEffect, useRef } from 'react';
+import { useGetCitiesQuery } from '../../../services/api/voyagesApi';
 
 interface CityAutocompleteProps {
-  placeholder: string;
   value: string;
   onChange: (value: string) => void;
-  icon: ReactElement;
-  error?: string; // Ajout de la prop error comme optionnelle
-  className?: string;
+  placeholder?: string;
+  icon?: React.ReactNode;
+  error?: string;
 }
 
 const CityAutocomplete: React.FC<CityAutocompleteProps> = ({
-  placeholder,
   value,
   onChange,
+  placeholder,
   icon,
-  error,
-  className = ''
+  error
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState(value);
-  const [debouncedSearchTerm] = useDebounce(searchTerm, 300);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  const filteredCities = CITIES.filter(city =>
-    city.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
+  const { data: cities = {results: []}, isLoading } = useGetCitiesQuery();
+
+  const filteredCities = cities?.results.filter(city =>
+    city.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   useEffect(() => {
@@ -39,52 +37,62 @@ const CityAutocomplete: React.FC<CityAutocompleteProps> = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
-    onChange(e.target.value);
-    setIsOpen(true);
-  };
-
-  const handleCitySelect = (city: string) => {
-    setSearchTerm(city);
-    onChange(city);
-    setIsOpen(false);
-  };
-
   return (
-    <div ref={wrapperRef} className="relative space-y-1">
-      <div className={`relative ${className}`}>
-        <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-          {icon}
-        </div>
+    <div ref={wrapperRef} className="relative">
+      <div className="relative">
+        {icon && (
+          <div className="absolute left-3 top-1/2 -translate-y-1/2">
+            {icon}
+          </div>
+        )}
         <input
           type="text"
           value={searchTerm}
-          onChange={handleInputChange}
+          onChange={(e) => {
+            setSearchTerm(e.target.value);
+            setIsOpen(true);
+          }}
           onFocus={() => setIsOpen(true)}
           placeholder={placeholder}
-          className={`w-full pl-10 pr-3 py-2 rounded-md bg-white/20 border
-                     ${error ? 'border-red-500 focus:ring-red-500' : 'border-white/30 focus:ring-orange-400'}
-                     text-white placeholder-gray-300 focus:outline-none focus:ring-2`}
+          className={`w-full h-[42px] pl-10 pr-4 rounded-lg bg-gray-800/50
+                     border text-white placeholder-gray-400
+                     focus:outline-none focus:ring-2 transition-colors
+                     ${error ? 'border-red-500 focus:ring-red-500' : 
+                              'border-white/20 focus:ring-orange-400 hover:border-orange-400'}`}
         />
       </div>
+
       {error && (
-        <p className="text-sm text-red-500 pl-1">
+        <div className="absolute -bottom-6 left-0 text-sm text-red-500">
           {error}
-        </p>
+        </div>
       )}
 
-      {isOpen && filteredCities.length > 0 && (
-        <div className="absolute z-50 w-full mt-1 bg-gray-800 rounded-md shadow-lg max-h-60 overflow-auto">
-          {filteredCities.map((city) => (
-            <button
-              key={city}
-              onClick={() => handleCitySelect(city)}
-              className="w-full text-left px-4 py-2 text-sm text-white hover:bg-gray-700 focus:outline-none"
-            >
-              {city}
-            </button>
-          ))}
+      {isOpen && (
+        <div className="absolute z-50 w-full mt-1 bg-gray-900 rounded-lg shadow-xl
+                      border border-gray-800 max-h-60 overflow-auto">
+          {isLoading ? (
+            <div className="p-2 text-gray-400 text-center">Chargement...</div>
+          ) : filteredCities.length > 0 ? (
+            filteredCities.map((city) => (
+              <button
+                key={city.id}
+                onClick={() => {
+                  setSearchTerm(city.name);
+                  onChange(city.name);
+                  setIsOpen(false);
+                }}
+                className="w-full px-4 py-2 text-left text-white hover:bg-gray-800
+                         transition-colors cursor-pointer"
+              >
+                {city.name}
+              </button>
+            ))
+          ) : (
+            <div className="p-2 text-gray-400 text-center">
+              Aucune ville trouvée
+            </div>
+          )}
         </div>
       )}
     </div>

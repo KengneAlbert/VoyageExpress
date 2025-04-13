@@ -302,13 +302,13 @@ const Payment = () => {
                     <div className="w-12 h-12 rounded-lg overflow-hidden">
                       <img
                         src={bookingData?.trip?.logo}
-                        alt={bookingData?.trip?.agency}
+                        alt={bookingData?.trip?.agency.name}
                         className="w-full h-full object-cover"
                       />
                     </div>
                     <div>
                       <p className="text-white font-medium">
-                        {bookingData?.trip?.agency}
+                        {bookingData?.trip?.agency.name}
                       </p>
                       <div className="flex items-center gap-2 text-sm text-gray-400">
                         <span>{bookingData?.trip?.departure.city}</span>

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Mail,
   Lock,
@@ -11,6 +11,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import AuthLayout from "./AuthLayout";
+import { useRegisterMutation } from '../../../services/api/authApi';
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -23,6 +24,9 @@ const Register = () => {
     password: "",
     confirmPassword: "",
   });
+  const [register, { isLoading: isRegistering }] = useRegisterMutation();
+  const [isSuccess, setIsSuccess] = useState(false);
+  const navigate = useNavigate();
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -40,16 +44,40 @@ const Register = () => {
     e.preventDefault();
     if (!validateForm()) return;
 
-    setIsLoading(true);
     try {
-      // Handle registration logic
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsLoading(false);
+      const result = await register({
+        first_name: formData.name,
+        email: formData.email,
+        phone_number: formData.phone,
+        password: formData.password,
+        password_confirm: formData.confirmPassword,
+        verification_method: 'E'
+      }).unwrap();
+
+      // Show success message instead of redirecting to OTP
+      setIsSuccess(true);
+    } catch (error: any) {
+      console.error('Failed to register:', error);
+      if (error.data) {
+        setErrors({
+          ...errors,
+          ...error.data
+        });
+      }
     }
   };
+
+  if (isSuccess) {
+    return (
+      <div className="max-w-md mx-auto p-6 text-center">
+        <h2 className="text-2xl font-bold text-white mb-4">Vérifiez votre email</h2>
+        <p className="text-gray-400">
+          Nous avons envoyé un lien de vérification à votre adresse email.
+          Veuillez cliquer sur le lien pour activer votre compte.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -262,7 +290,7 @@ const Register = () => {
                        hover:shadow-orange-500/30 transition-all disabled:opacity-50
                        disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
-                {isLoading ? (
+                {isLoading || isRegistering ? (
                   <>
                     <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
                     <span>Création du compte...</span>

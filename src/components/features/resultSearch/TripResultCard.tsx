@@ -1,6 +1,9 @@
 import { motion } from 'framer-motion';
 import { Users, Clock, MapPin, ArrowRight, Crown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../app/store';
+import { TripSearchResponse } from '../../../services/api/types';
 
 interface TripPoint {
   city: string;
@@ -8,26 +11,27 @@ interface TripPoint {
 }
 
 interface TripCardProps {
-  trip: {
-    id: string;
-    agency: string;
-    logo: string;
-    price: number;
-    departure: TripPoint;
-    destination: TripPoint;
-    departureTime: string;
-    arrivalTime: string;
-    availableSeats: number;
-    isVip?: boolean;
-  };
+  trip: TripSearchResponse;
 }
 
 const TripCard = ({ trip }: TripCardProps) => {
   const navigate = useNavigate();
+  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
 
   const handleBooking = () => {
+    if (!isAuthenticated) {
+      // Save booking intent in session storage
+      sessionStorage.setItem('bookingIntent', JSON.stringify({
+        tripId: trip.id,
+        redirectTo: '/booking'
+      }));
+      navigate('/login');
+      return;
+    }
+
     navigate('/booking', { state: { trip } });
   };
+
   return (
     <motion.div
       onClick={handleBooking}
@@ -75,7 +79,7 @@ const TripCard = ({ trip }: TripCardProps) => {
               </motion.div>
             </div>
             <div>
-              <h3 className="font-bold text-white group-hover:text-orange-400 transition-colors">{trip.agency}</h3>
+              <h3 className="font-bold text-white group-hover:text-orange-400 transition-colors">{trip.agency.name}</h3>
               <div className="flex items-center gap-1 text-sm text-gray-400">
                 <Users className="h-4 w-4" />
                 <span>{trip.availableSeats} places</span>
@@ -134,6 +138,7 @@ const TripCard = ({ trip }: TripCardProps) => {
             <span>{trip.arrivalTime}</span>
           </div>
           <motion.button
+            onClick={handleBooking}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className="px-6 py-2 bg-gradient-to-r from-orange-500 to-orange-600 
