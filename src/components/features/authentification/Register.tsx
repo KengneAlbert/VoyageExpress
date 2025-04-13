@@ -25,6 +25,7 @@ const Register = () => {
     confirmPassword: "",
   });
   const [register, { isLoading: isRegistering }] = useRegisterMutation();
+  const [isSuccess, setIsSuccess] = useState(false);
   const navigate = useNavigate();
 
   const validateForm = () => {
@@ -48,13 +49,13 @@ const Register = () => {
         first_name: formData.name,
         email: formData.email,
         phone_number: formData.phone,
-        password1: formData.password,
-        password2: formData.confirmPassword
+        password: formData.password,
+        password_confirm: formData.confirmPassword,
+        verification_method: 'E'
       }).unwrap();
 
-      // Store auth token if needed
-      localStorage.setItem('token', result.key);
-      navigate('/verify-otp');
+      // Show success message instead of redirecting to OTP
+      setIsSuccess(true);
     } catch (error: any) {
       console.error('Failed to register:', error);
       if (error.data) {
@@ -65,6 +66,18 @@ const Register = () => {
       }
     }
   };
+
+  if (isSuccess) {
+    return (
+      <div className="max-w-md mx-auto p-6 text-center">
+        <h2 className="text-2xl font-bold text-white mb-4">Vérifiez votre email</h2>
+        <p className="text-gray-400">
+          Nous avons envoyé un lien de vérification à votre adresse email.
+          Veuillez cliquer sur le lien pour activer votre compte.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -277,7 +290,7 @@ const Register = () => {
                        hover:shadow-orange-500/30 transition-all disabled:opacity-50
                        disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
-                {isLoading ? (
+                {isLoading || isRegistering ? (
                   <>
                     <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
                     <span>Création du compte...</span>

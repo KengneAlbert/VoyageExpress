@@ -11,8 +11,9 @@ interface RegisterRequest {
   last_name?: string;
   email?: string;
   phone_number?: string;
-  password1: string;
-  password2: string;
+  password: string;
+  password_confirm: string;
+  verification_method: string;
 }
 
 interface AuthResponse {
@@ -26,6 +27,15 @@ interface AuthResponse {
   };
 }
 
+interface VerifyOtpRequest {
+  user_id: string;
+  otp: string;
+}
+
+interface ResendOtpRequest {
+  user_id: string;
+}
+
 export const authApi = createApi({
   reducerPath: 'authApi',
   baseQuery: fetchBaseQuery({
@@ -33,9 +43,9 @@ export const authApi = createApi({
     credentials: 'include',
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as any).auth.token;
-      if (token) {
-        headers.set('authorization', `Token ${token}`);
-      }
+    //   if (token) {
+    //     headers.set('authorization', `Token ${token}`);
+    //   }
       return headers;
     },
   }),
@@ -67,6 +77,27 @@ export const authApi = createApi({
     verifyToken: builder.query({
       query: () => 'verify/',
     }),
+    verifyOtp: builder.mutation<{ detail: string }, VerifyOtpRequest>({
+      query: (credentials) => ({
+        url: 'register/verify-otp/',
+        method: 'POST',
+        body: credentials,
+      }),
+    }),
+    resendOtp: builder.mutation<{ detail: string }, ResendOtpRequest>({
+      query: (data) => ({
+        url: 'register/resend-otp/',
+        method: 'POST',
+        body: data,
+      }),
+    }),
+    verifyEmail: builder.mutation<{ detail: string }, { key: string }>({
+      query: (data) => ({
+        url: 'register/verify-email/',  // Updated to match Django URL pattern
+        method: 'POST',
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -74,4 +105,7 @@ export const {
   useLoginMutation,
   useRegisterMutation,
   useVerifyTokenQuery,
+  useVerifyOtpMutation,
+  useResendOtpMutation,
+  useVerifyEmailMutation,
 } = authApi;

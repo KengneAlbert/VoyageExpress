@@ -21,6 +21,8 @@ import About from "./components/features/landingPage/About";
 import { NotificationsProvider } from './context/NotificationsContext';
 import { Provider } from 'react-redux';
 import { store } from './app/store';
+import VerifyOtp from "./components/features/authentification/VerifyOtp";
+import EmailVerification from "./components/features/authentification/EmailVerification";
 
 // Lazy loading des composants majeurs
 const Hero = React.lazy(() => import("./components/features/landingPage/Hero"));
@@ -117,6 +119,8 @@ function App() {
                 element={<PaymentSuccess replace={true} />}
               />
               <Route path="/destinations/*" element={<DestinationRoutes />} />
+              <Route path="/verify-otp" element={<VerifyOtp />} />
+              <Route path="/email/confirm/:key" element={<EmailVerification />} />
             </Routes>
           </div>
         </NotificationsProvider>
