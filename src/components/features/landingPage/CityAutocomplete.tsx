@@ -20,9 +20,9 @@ const CityAutocomplete: React.FC<CityAutocompleteProps> = ({
   const [searchTerm, setSearchTerm] = useState(value);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  const { data: cities = [], isLoading } = useGetCitiesQuery();
+  const { data: cities = {results: []}, isLoading } = useGetCitiesQuery();
 
-  const filteredCities = cities.filter(city =>
+  const filteredCities = cities?.results.filter(city =>
     city.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 

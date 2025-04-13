@@ -16,6 +16,7 @@ import {
   ArrowLeft,
 } from "lucide-react";
 import SeatSelection from "./SeatSelection";
+import { TripSearchResponse } from "../../../services/api/types";
 
 interface PassengerInfo {
   firstName: string;
@@ -28,7 +29,7 @@ interface PassengerInfo {
 const BookingForm = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const trip = location.state?.trip;
+  const trip = location.state?.trip as TripSearchResponse;
 
   const [passengers, setPassengers] = useState<PassengerInfo[]>([
     {
@@ -195,10 +196,10 @@ const BookingForm = () => {
               <div className="p-6 border-b border-gray-800/50">
                 <div className="flex items-center gap-4">
                   <div className="w-16 h-16 rounded-xl overflow-hidden">
-                    <img src={trip?.logo} alt={trip?.agency} className="w-full h-full object-cover" />
+                    <img src={trip?.logo} alt={trip?.agency.name} className="w-full h-full object-cover" />
                   </div>
                   <div>
-                    <h2 className="text-xl font-bold text-white mb-1">{trip?.agency}</h2>
+                    <h2 className="text-xl font-bold text-white mb-1">{trip?.agency.name}</h2>
                     <div className="flex items-center gap-2 text-gray-400">
                       <MapPin className="w-4 h-4" />
                       <span>{trip?.departure.city}</span>

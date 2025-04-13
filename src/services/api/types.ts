@@ -75,3 +75,18 @@ export interface TripSearchResponse {
   arrivalTime: string;
   logo: string;
 }
+
+
+export interface CityReponse {
+  count : number,
+  next: number |  null,
+  previous: number |  null
+  results: City[]
+}
+
+export interface TripReponse {
+  count : number,
+  next: number |  null,
+  previous: number |  null
+  results: TripSearchResponse[]
+}

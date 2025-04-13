@@ -1,22 +1,30 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import type { SearchParams, TripSearchResponse, Agency, City, Route } from './types';
+import type { SearchParams, TripSearchResponse, Agency, Route, CityReponse, TripReponse } from './types';
+import type { RootState } from '../../app/store';
 
 export const voyagesApi = createApi({
   reducerPath: 'voyagesApi',
   baseQuery: fetchBaseQuery({ 
     baseUrl: 'http://localhost:8000/api/',
     credentials: 'include',
+    prepareHeaders: (headers, { getState }) => {
+      const token = (getState() as RootState).auth.token;
+      if (token) {
+        headers.set('authorization', `Token ${token}`);
+      }
+      return headers;
+    },
   }),
   tagTypes: ['Trips', 'Cities', 'Agencies', 'Routes'],
   endpoints: (builder) => ({
-    searchTrips: builder.query<TripSearchResponse[], SearchParams>({
+    searchTrips: builder.query<TripReponse, SearchParams>({
       query: (params) => ({
-        url: 'trips/search',
+        url: 'trips/',
         params: {
-          departure_city: params.departure,
-          destination_city: params.destination,
-          travel_date: params.date,
-          passengers: params.passengers,
+          // route__departure__city__name: params.departure,
+          // route__arrived__city__name: params.destination,
+          // start_date: params.date,
+          // number_of_passengers: params.passengers,
         },
       }),
       providesTags: ['Trips'],
@@ -27,7 +35,7 @@ export const voyagesApi = createApi({
       providesTags: ['Routes'],
     }),
 
-    getCities: builder.query<City[], void>({
+    getCities: builder.query<CityReponse, void>({
       query: () => 'cities/',
       providesTags: ['Cities'],
     }),

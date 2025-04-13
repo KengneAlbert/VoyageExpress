@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import CityAutocomplete from "./CityAutocomplete";
 import { useNavigate } from "react-router-dom";
 import { DatePicker } from "../../common/DatePicker";
-import { useLazySearchTripsQuery, useGetCitiesQuery } from '../../../services/api/voyagesApi';
+import { useLazySearchTripsQuery } from '../../../services/api/voyagesApi';
 
 interface SearchFormData {
   departure: string;
@@ -26,7 +26,6 @@ const SearchForm: React.FC<SearchFormProps> = ({ defaultValues }) => {
   const [isPassengersOpen, setIsPassengersOpen] = useState(false);
   const navigate = useNavigate();
 
-  const { data: cities = [] } = useGetCitiesQuery();
   const [searchTrips, { isLoading: isSearching }] = useLazySearchTripsQuery();
 
   const swapCities = (e: React.MouseEvent) => {

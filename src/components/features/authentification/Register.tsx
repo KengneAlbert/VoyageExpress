@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Mail,
   Lock,
@@ -11,6 +11,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import AuthLayout from "./AuthLayout";
+import { useRegisterMutation } from '../../../services/api/authApi';
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -23,6 +24,8 @@ const Register = () => {
     password: "",
     confirmPassword: "",
   });
+  const [register, { isLoading: isRegistering }] = useRegisterMutation();
+  const navigate = useNavigate();
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -40,14 +43,26 @@ const Register = () => {
     e.preventDefault();
     if (!validateForm()) return;
 
-    setIsLoading(true);
     try {
-      // Handle registration logic
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsLoading(false);
+      const result = await register({
+        first_name: formData.name,
+        email: formData.email,
+        phone_number: formData.phone,
+        password1: formData.password,
+        password2: formData.confirmPassword
+      }).unwrap();
+
+      // Store auth token if needed
+      localStorage.setItem('token', result.key);
+      navigate('/verify-otp');
+    } catch (error: any) {
+      console.error('Failed to register:', error);
+      if (error.data) {
+        setErrors({
+          ...errors,
+          ...error.data
+        });
+      }
     }
   };
 

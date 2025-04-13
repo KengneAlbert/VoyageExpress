@@ -13,7 +13,7 @@ const SearchResults = () => {
   const searchData = location.state?.searchData;
 
   const { 
-    data: trips = [], 
+    data: trips, 
     isLoading, 
     error,
     refetch 
@@ -36,7 +36,7 @@ const SearchResults = () => {
   }>({});
 
   const sortedTrips = useMemo(() => {
-    const sorted = [...trips];
+    const sorted = [...(trips?.results || []) ];
 
     switch (sortType) {
       case "price_asc":
@@ -84,7 +84,7 @@ const SearchResults = () => {
               <div className="bg-gray-950/80 backdrop-blur-md px-4 sm:px-6 lg:px-8 py-4">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-2xl font-bold text-white">
-                    Résultats ({trips.length})
+                    Résultats ({trips?.results.length || 0})
                   </h2>
                 </div>
                 <FilterBar onFilterChange={handleFilterChange} onSort={(type) => setSortType(type)} />
@@ -122,7 +122,7 @@ const SearchResults = () => {
                     Veuillez réessayer plus tard
                   </p>
                 </motion.div>
-              ) : trips.length > 0 ? (
+              ) : (trips?.results.length || 0) > 0 ? (
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
