@@ -19,6 +19,7 @@ import paypalLogo from "../../../assets/images/playstore.png";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import StripeForm from "./StripeForm";
+import CinetPayButton from './CinetPayButton';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY || "");
 
@@ -65,6 +66,7 @@ const Payment = () => {
     expiryDate: "",
     cvv: "",
   });
+  const [paymentError, setPaymentError] = useState<string | null>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -101,6 +103,18 @@ const Payment = () => {
     } finally {
       setIsProcessing(false);
     }
+  };
+
+  const handlePaymentSuccess = () => {
+    navigate('/payment-success', {
+      state: { reservationId: bookingData.reservationId }
+    });
+  };
+
+  const handlePaymentError = (error: string) => {
+    setPaymentError(error);
+    // Log error for analytics
+    console.error('Payment failed:', error);
   };
 
   return (
@@ -302,13 +316,13 @@ const Payment = () => {
                     <div className="w-12 h-12 rounded-lg overflow-hidden">
                       <img
                         src={bookingData?.trip?.logo}
-                        alt={bookingData?.trip?.agency}
+                        alt={bookingData?.trip?.agency.name}
                         className="w-full h-full object-cover"
                       />
                     </div>
                     <div>
                       <p className="text-white font-medium">
-                        {bookingData?.trip?.agency}
+                        {bookingData?.trip?.agency.name}
                       </p>
                       <div className="flex items-center gap-2 text-sm text-gray-400">
                         <span>{bookingData?.trip?.departure.city}</span>
@@ -339,6 +353,27 @@ const Payment = () => {
             </div>
           </motion.div>
         </div>
+      </div>
+      {paymentError && (
+        <div className="max-w-md mx-auto px-4 mb-6">
+          <PaymentError 
+            message={paymentError}
+            onRetry={() => setPaymentError(null)}
+          />
+        </div>
+      )}
+      <div className="max-w-md mx-auto p-6">
+        <CinetPayButton
+          amount={bookingData.totalPrice}
+          reservationId={bookingData.reservationId}
+          customerInfo={{
+            name: `${bookingData.passengers[0].firstName} ${bookingData.passengers[0].lastName}`,
+            email: bookingData.passengers[0].email,
+            phone: bookingData.passengers[0].phone
+          }}
+          onSuccess={handlePaymentSuccess}
+          onError={handlePaymentError}
+        />
       </div>
     </div>
   );

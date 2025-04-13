@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import { Mail, Lock, Eye, EyeOff, AlertCircle } from "lucide-react";
 import AuthLayout from "./AuthLayout";
+import { useLoginMutation } from '../../../services/api/authApi';
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -13,6 +14,7 @@ const Login = () => {
     password: "",
   });
   const navigate = useNavigate();
+  const [login, { isLoading: isAuthenticating }] = useLoginMutation();
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -26,16 +28,27 @@ const Login = () => {
     e.preventDefault();
     if (!validateForm()) return;
 
-    setIsLoading(true);
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      // Redirect to home
-      navigate('/');
+      const result = await login({
+        email: formData.email,
+        password: formData.password
+      }).unwrap();
+      
+      // Check for booking intent after successful login
+      const bookingIntent = sessionStorage.getItem('bookingIntent');
+      if (bookingIntent) {
+        const { redirectTo } = JSON.parse(bookingIntent);
+        sessionStorage.removeItem('bookingIntent');
+        navigate(redirectTo);
+      } else {
+        navigate('/');
+      }
     } catch (error) {
-      console.error(error);
-    } finally {
-      setIsLoading(false);
+      console.error('Failed to login:', error);
+      setErrors({
+        ...errors,
+        submit: 'Email ou mot de passe incorrect'
+      });
     }
   };
 
@@ -154,13 +167,13 @@ const Login = () => {
               whileHover={{ scale: 1.01 }}
               whileTap={{ scale: 0.99 }}
               type="submit"
-              disabled={isLoading}
+              disabled={isLoading ||isAuthenticating}
               className="w-full mt-6 py-3 px-4 bg-gradient-to-r from-orange-500 to-orange-600 
                      text-white font-medium rounded-lg shadow-lg shadow-orange-500/20
                      hover:shadow-orange-500/30 transition-all disabled:opacity-50
                      disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
-              {isLoading ? (
+              {isLoading || isAuthenticating ? (
                 <>
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
                   <span>Connexion...</span>

@@ -16,6 +16,9 @@ import {
   ArrowLeft,
 } from "lucide-react";
 import SeatSelection from "./SeatSelection";
+import { TripSearchResponse } from "../../../services/api/types";
+import { useCreateReservationMutation, useCreatePaymentIntentMutation } from '../../../services/api/reservationApi';
+import { processStripePayment } from '../../../services/api/stripeService';
 
 interface PassengerInfo {
   firstName: string;
@@ -28,7 +31,7 @@ interface PassengerInfo {
 const BookingForm = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const trip = location.state?.trip;
+  const trip = location.state?.trip as TripSearchResponse;
 
   const [passengers, setPassengers] = useState<PassengerInfo[]>([
     {
@@ -89,33 +92,42 @@ const BookingForm = () => {
     }
   };
 
+  const [createReservation] = useCreateReservationMutation();
+  const [createPaymentIntent] = useCreatePaymentIntentMutation();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Validate all passengers data
-    const isValid = passengers.every(p => 
-      p.firstName && 
-      p.lastName && 
-      p.email && 
-      p.phone && 
-      p.idNumber
-    );
+    if (!validateForm()) return;
 
-    // Validate seat selection
-    const hasAllSeats = selectedSeats.length === passengers.length;
+    try {
+      // Create reservation
+      const reservationResult = await createReservation({
+        trip_id: trip.id,
+        passengers: passengers.map(p => ({
+          first_name: p.firstName,
+          last_name: p.lastName,
+          email: p.email,
+          phone_number: p.phone,
+          id_number: p.idNumber
+        })),
+        selected_seats: selectedSeats,
+        payment_method: 'stripe'
+      }).unwrap();
 
-    if (isValid && hasAllSeats) {
-      const bookingData = {
-        trip,
-        passengers,
-        selectedSeats,
-        totalPrice: trip?.price * passengers.length + (trip?.isVip ? 2000 : 0)
-      };
+      // Create payment intent
+      const paymentIntent = await createPaymentIntent({
+        reservation_id: reservationResult.reservation_id
+      }).unwrap();
 
-      // Navigate to payment page with booking data
-      navigate('/payment', { 
-        state: { bookingData }
+      // Process Stripe payment
+      await processStripePayment(paymentIntent.clientSecret);
+
+      navigate('/payment-success', {
+        state: { reservationId: reservationResult.reservation_id }
       });
+    } catch (error) {
+      console.error('Payment failed:', error);
+      // Handle error state
     }
   };
 
@@ -195,10 +207,10 @@ const BookingForm = () => {
               <div className="p-6 border-b border-gray-800/50">
                 <div className="flex items-center gap-4">
                   <div className="w-16 h-16 rounded-xl overflow-hidden">
-                    <img src={trip?.logo} alt={trip?.agency} className="w-full h-full object-cover" />
+                    <img src={trip?.logo} alt={trip?.agency.name} className="w-full h-full object-cover" />
                   </div>
                   <div>
-                    <h2 className="text-xl font-bold text-white mb-1">{trip?.agency}</h2>
+                    <h2 className="text-xl font-bold text-white mb-1">{trip?.agency.name}</h2>
                     <div className="flex items-center gap-2 text-gray-400">
                       <MapPin className="w-4 h-4" />
                       <span>{trip?.departure.city}</span>
