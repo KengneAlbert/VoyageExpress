@@ -66,6 +66,7 @@ const Payment = () => {
     expiryDate: "",
     cvv: "",
   });
+  const [paymentError, setPaymentError] = useState<string | null>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -102,6 +103,18 @@ const Payment = () => {
     } finally {
       setIsProcessing(false);
     }
+  };
+
+  const handlePaymentSuccess = () => {
+    navigate('/payment-success', {
+      state: { reservationId: bookingData.reservationId }
+    });
+  };
+
+  const handlePaymentError = (error: string) => {
+    setPaymentError(error);
+    // Log error for analytics
+    console.error('Payment failed:', error);
   };
 
   return (
@@ -341,6 +354,14 @@ const Payment = () => {
           </motion.div>
         </div>
       </div>
+      {paymentError && (
+        <div className="max-w-md mx-auto px-4 mb-6">
+          <PaymentError 
+            message={paymentError}
+            onRetry={() => setPaymentError(null)}
+          />
+        </div>
+      )}
       <div className="max-w-md mx-auto p-6">
         <CinetPayButton
           amount={bookingData.totalPrice}
@@ -350,15 +371,8 @@ const Payment = () => {
             email: bookingData.passengers[0].email,
             phone: bookingData.passengers[0].phone
           }}
-          onSuccess={() => {
-            navigate('/payment-success', {
-              state: { reservationId: bookingData.reservationId }
-            });
-          }}
-          onError={(error) => {
-            // Handle payment error
-            console.error('Payment failed:', error);
-          }}
+          onSuccess={handlePaymentSuccess}
+          onError={handlePaymentError}
         />
       </div>
     </div>

@@ -16,6 +16,11 @@ interface CinetPayButtonProps {
   onError: (error: string) => void;
 }
 
+interface PaymentState {
+  status: 'idle' | 'loading' | 'processing' | 'success' | 'error';
+  error?: string;
+}
+
 const CinetPayButton: React.FC<CinetPayButtonProps> = ({
   amount,
   reservationId,
@@ -23,15 +28,13 @@ const CinetPayButton: React.FC<CinetPayButtonProps> = ({
   onSuccess,
   onError
 }) => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [confirmPayment] = useConfirmPaymentMutation();
+  const [paymentState, setPaymentState] = useState<PaymentState>({ status: 'idle' });
 
   const handlePayment = async () => {
-    setIsLoading(true);
-    setError(null);
-
     try {
+      setPaymentState({ status: 'loading' });
+      
+      // Initialize CinetPay
       // @ts-ignore - CinetPay is loaded from CDN
       window.CinetPay.setConfig({
         apikey: import.meta.env.VITE_CINETPAY_APIKEY,
@@ -40,6 +43,9 @@ const CinetPayButton: React.FC<CinetPayButtonProps> = ({
         mode: 'PRODUCTION'
       });
 
+      setPaymentState({ status: 'processing' });
+
+      // Process Payment
       // @ts-ignore
       window.CinetPay.getCheckout({
         transaction_id: `RES-${reservationId}-${Date.now()}`,
@@ -51,46 +57,52 @@ const CinetPayButton: React.FC<CinetPayButtonProps> = ({
         customer_surname: customerInfo.name.split(' ')[1] || '',
         customer_email: customerInfo.email,
         customer_phone_number: customerInfo.phone,
-        customer_address : "",
-        customer_city: "",
-        customer_country : "CM",
-        customer_state : "CM",
-        customer_zip_code : ""
+        customer_country: 'CM',
       });
 
+      // Handle Response
       // @ts-ignore
-      window.CinetPay.waitResponse((data: any) => {
-        if (data.status === "REFUSED") {
-          setError("Le paiement a échoué");
-          onError("Payment refused");
-        } else if (data.status === "ACCEPTED") {
+      window.CinetPay.waitResponse((response: any) => {
+        if (response.status === 'ACCEPTED') {
+          setPaymentState({ status: 'success' });
           onSuccess();
+        } else {
+          setPaymentState({ 
+            status: 'error', 
+            error: 'Le paiement a été refusé. Veuillez réessayer.' 
+          });
         }
       });
 
+      // Handle Errors
       // @ts-ignore
       window.CinetPay.onError((error: any) => {
-        setError("Une erreur s'est produite");
-        onError(error?.message || "Payment error");
+        setPaymentState({ 
+          status: 'error', 
+          error: 'Une erreur est survenue lors du paiement. Veuillez réessayer.' 
+        });
+        onError(error?.message || 'Payment failed');
       });
+
     } catch (error) {
-      setError("Une erreur s'est produite");
-      onError("Payment initialization failed");
-    } finally {
-      setIsLoading(false);
+      setPaymentState({ 
+        status: 'error', 
+        error: 'Une erreur inattendue est survenue. Veuillez réessayer.' 
+      });
+      onError('Payment initialization failed');
     }
   };
 
   return (
     <div className="space-y-4">
-      {error && (
+      {paymentState.status === 'error' && (
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           className="flex items-center gap-2 text-red-500 bg-red-500/10 p-3 rounded-lg"
-        ></motion.div>
+        >
           <AlertCircle className="w-5 h-5" />
-          <span>{error}</span>
+          <span>{paymentState.error || 'Une erreur est survenue'}</span>
         </motion.div>
       )}
 
@@ -98,20 +110,26 @@ const CinetPayButton: React.FC<CinetPayButtonProps> = ({
         whileHover={{ scale: 1.01 }}
         whileTap={{ scale: 0.99 }}
         onClick={handlePayment}
-        disabled={isLoading}
-        className="w-full py-4 bg-gradient-to-r from-orange-500 to-orange-600 
-                  rounded-xl text-white font-medium shadow-lg
-                  disabled:opacity-50 disabled:cursor-not-allowed
-                  flex items-center justify-center gap-2"
+        disabled={paymentState.status === 'loading' || paymentState.status === 'processing'}
+        className={`w-full py-4 rounded-xl font-medium transition-all duration-300
+          ${paymentState.status === 'processing' 
+            ? 'bg-orange-500/50 text-white cursor-not-allowed'
+            : 'bg-gradient-to-r from-orange-500 to-orange-600 text-white hover:shadow-lg hover:shadow-orange-500/20'
+          }
+        `}
       >
-        {isLoading ? (
-          <></>
-            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-            <span>Traitement en cours...</span>
-          </>
-        ) : (
-          <span>Payer maintenant avec CinetPay</span>
-        )}
+        <div className="flex items-center justify-center gap-3">
+          {paymentState.status === 'loading' || paymentState.status === 'processing' ? (
+            <>
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              <span>
+                {paymentState.status === 'loading' ? 'Initialisation...' : 'Traitement en cours...'}
+              </span>
+            </>
+          ) : (
+            <span>Payer maintenant avec CinetPay</span>
+          )}
+        </div>
       </motion.button>
     </div>
   );
