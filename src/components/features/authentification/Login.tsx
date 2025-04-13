@@ -167,13 +167,13 @@ const Login = () => {
               whileHover={{ scale: 1.01 }}
               whileTap={{ scale: 0.99 }}
               type="submit"
-              disabled={isLoading}
+              disabled={isLoading ||isAuthenticating}
               className="w-full mt-6 py-3 px-4 bg-gradient-to-r from-orange-500 to-orange-600 
                      text-white font-medium rounded-lg shadow-lg shadow-orange-500/20
                      hover:shadow-orange-500/30 transition-all disabled:opacity-50
                      disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
-              {isLoading ? (
+              {isLoading || isAuthenticating ? (
                 <>
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
                   <span>Connexion...</span>

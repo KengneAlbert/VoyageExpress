@@ -1,6 +1,19 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { setCredentials, logout } from './authSlice';
 
+// Function to get CSRF token from cookies
+export const getCSRFToken = async () => {
+  // First make a request to get the CSRF cookie
+  await fetch('http://localhost:8000/api/auth/csrf/', {
+    credentials: 'include',
+  });
+  
+  // Then get the CSRF token from the cookie
+  const cookies = document.cookie.split(';');
+  const csrfCookie = cookies.find(cookie => cookie.trim().startsWith('csrftoken='));
+  return csrfCookie ? csrfCookie.split('=')[1] : null;
+};
+
 interface LoginRequest {
   email: string;
   password: string;
@@ -41,11 +54,12 @@ export const authApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: 'http://localhost:8000/api/auth/',
     credentials: 'include',
-    prepareHeaders: (headers, { getState }) => {
-      const token = (getState() as any).auth.token;
-    //   if (token) {
-    //     headers.set('authorization', `Token ${token}`);
-    //   }
+    prepareHeaders: async (headers) => {
+      const token = await getCSRFToken();
+      if (token) {
+        headers.set('X-CSRFToken', token);
+      }
+      headers.set('Content-Type', 'application/json');
       return headers;
     },
   }),

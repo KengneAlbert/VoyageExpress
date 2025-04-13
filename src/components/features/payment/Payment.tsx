@@ -19,6 +19,7 @@ import paypalLogo from "../../../assets/images/playstore.png";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import StripeForm from "./StripeForm";
+import CinetPayButton from './CinetPayButton';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY || "");
 
@@ -339,6 +340,26 @@ const Payment = () => {
             </div>
           </motion.div>
         </div>
+      </div>
+      <div className="max-w-md mx-auto p-6">
+        <CinetPayButton
+          amount={bookingData.totalPrice}
+          reservationId={bookingData.reservationId}
+          customerInfo={{
+            name: `${bookingData.passengers[0].firstName} ${bookingData.passengers[0].lastName}`,
+            email: bookingData.passengers[0].email,
+            phone: bookingData.passengers[0].phone
+          }}
+          onSuccess={() => {
+            navigate('/payment-success', {
+              state: { reservationId: bookingData.reservationId }
+            });
+          }}
+          onError={(error) => {
+            // Handle payment error
+            console.error('Payment failed:', error);
+          }}
+        />
       </div>
     </div>
   );

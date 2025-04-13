@@ -284,7 +284,7 @@ const Register = () => {
                 whileHover={{ scale: 1.01 }}
                 whileTap={{ scale: 0.99 }}
                 type="submit"
-                disabled={isLoading}
+                disabled={isLoading || isRegistering}
                 className="w-full py-3 px-4 bg-gradient-to-r from-orange-500 to-orange-600 
                        text-white font-medium rounded-lg shadow-lg shadow-orange-500/20
                        hover:shadow-orange-500/30 transition-all disabled:opacity-50

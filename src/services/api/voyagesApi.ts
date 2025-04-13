@@ -1,17 +1,23 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import type { SearchParams, TripSearchResponse, Agency, Route, CityReponse, TripReponse } from './types';
-import type { RootState } from '../../app/store';
 
 export const voyagesApi = createApi({
   reducerPath: 'voyagesApi',
   baseQuery: fetchBaseQuery({ 
     baseUrl: 'http://localhost:8000/api/',
     credentials: 'include',
-    prepareHeaders: (headers, { getState }) => {
-      const token = (getState() as RootState).auth.token;
-      if (token) {
-        headers.set('authorization', `Token ${token}`);
-      }
+    prepareHeaders: (headers) => {
+      // Add CSRF token to headers
+      // const token = getCSRFToken();
+      // if (token) {
+      //   headers.set('X-CSRFToken', token);
+      // }
+      
+      // // Add auth token if exists
+      // const authToken = (getState() as RootState).auth.token;
+      // if (authToken) {
+      //   headers.set('authorization', `Token ${authToken}`);
+      // }
       return headers;
     },
   }),

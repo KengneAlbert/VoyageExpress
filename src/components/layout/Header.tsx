@@ -5,13 +5,13 @@ import {
   Globe,
   Check,
   UserCircle,
-  Settings,
   LogOut,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Navigation from "./Navigation";
 import LanguageSelector from "./LanguageSelector";
 import { Link } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -20,6 +20,7 @@ const Header = () => {
   const [currentLanguage, setCurrentLanguage] = useState("FR");
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const profileMenuRef = useRef<HTMLDivElement>(null);
+  const {user, isAuthenticated} = useAuth()
 
   const languages = [
     { code: "FR", label: "Français" },
@@ -47,6 +48,108 @@ const Header = () => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  const renderAuthButtons = () => {
+    if (isAuthenticated && user) {
+      return (
+        <div className="relative" ref={profileMenuRef}>
+          <button
+            onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+            className="flex items-center gap-3 p-2 hover:bg-gray-800/50 rounded-xl transition-all duration-300 group"
+          >
+            <div className="relative">
+              {user.photoURL ? (
+                <img
+                  src={user.photoURL}
+                  alt={user.first_name || '' + ' ' +  user.last_name ||''}
+                  className="w-10 h-10 rounded-full object-cover border-2 border-gray-700 group-hover:border-orange-500 transition-colors"
+                />
+              ) : (
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center">
+                  <span className="text-lg font-semibold text-white">
+                    {(user.first_name || user.email)?.charAt(0).toUpperCase()}
+                  </span>
+                </div>
+              )}
+              <div className="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-green-500 border-2 border-gray-900 rounded-full" />
+            </div>
+            <div className="hidden lg:block text-left">
+              <p className="text-sm font-medium text-white">{(user?.first_name || '') + ' ' + (user?.last_name || '')}</p>
+              <p className="text-xs text-gray-400">{user.email}</p>
+            </div>
+          </button>
+
+          <AnimatePresence>
+            {isProfileMenuOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+                className="absolute right-0 mt-2 w-64 bg-gray-900 rounded-xl border border-gray-800/50 shadow-xl py-1 z-50"
+              >
+                <div className="px-4 py-3 border-b border-gray-800">
+                  <p className="text-sm text-white font-medium">{(user?.first_name || '') + ' ' + ( user?.last_name || '')}</p>
+                  <p className="text-xs text-gray-400">{user.email}</p>
+                </div>
+
+                <div className="py-1">
+                  <Link
+                    to="/profile"
+                    className="w-full px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800 flex items-center gap-2"
+                  >
+                    <UserCircle className="h-4 w-4" />
+                    Mon profil
+                  </Link>
+                  <Link
+                    to="/mes-billets"
+                    className="w-full px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800 flex items-center gap-2"
+                  >
+                    <UserCircle className="h-4 w-4" />
+                    Mes Billets
+                  </Link>
+                </div>
+
+                <div className="border-t border-gray-800 py-1">
+                  <button
+                    onClick={() => {
+                      // Add logout logic here
+                    }}
+                    className="w-full px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-gray-800 flex items-center gap-2"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    Déconnexion
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      );
+    }
+
+    return (
+      <div className="flex items-center space-x-4">
+        <Link
+          to="/login"
+          className="relative inline-flex items-center justify-center px-6 py-2.5 text-sm font-medium text-white rounded-lg
+                     bg-gradient-to-r from-gray-800 to-gray-900 hover:from-gray-700 hover:to-gray-800
+                     border border-white/10 hover:border-white/20 transition-all duration-300 group"
+        >
+          <span className="relative z-10">Connexion</span>
+          <div className="absolute inset-0 bg-gradient-to-r from-orange-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100 rounded-lg blur transition-opacity" />
+        </Link>
+
+        <Link
+          to="/register"
+          className="relative inline-flex items-center justify-center px-6 py-2.5 text-sm font-medium text-white rounded-lg
+                     bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700
+                     transition-all duration-300 transform hover:scale-105"
+        >
+          <span className="relative z-10">Inscription</span>
+        </Link>
+      </div>
+    );
+  };
 
   return (
     <motion.header
@@ -131,111 +234,7 @@ const Header = () => {
           {/* Auth Buttons - Desktop */}
           <div className="hidden md:flex items-center space-x-6">
             <LanguageSelector />
-
-            <div className="flex items-center space-x-4">
-              <Link
-                to="/login"
-                className="relative inline-flex items-center justify-center px-6 py-2.5 text-sm font-medium text-white rounded-lg
-                           bg-gradient-to-r from-gray-800 to-gray-900 hover:from-gray-700 hover:to-gray-800
-                           border border-white/10 hover:border-white/20
-                           transition-all duration-300 hover:shadow-md hover:shadow-white/5
-                           group"
-              >
-                <span className="relative z-10">Connexion</span>
-                <div
-                  className="absolute inset-0 bg-gradient-to-r from-orange-500/20 to-purple-500/20 opacity-0 
-                              group-hover:opacity-100 rounded-lg blur transition-opacity"
-                />
-              </Link>
-
-              <Link
-                to="/register"
-                className="relative inline-flex items-center justify-center px-6 py-2.5 text-sm font-medium text-white rounded-lg
-                           bg-gradient-to-r from-orange-500 to-orange-600
-                           hover:from-orange-600 hover:to-orange-700
-                           transition-all duration-300
-                           transform hover:scale-105 hover:shadow-lg hover:shadow-orange-500/20"
-              >
-                <span className="relative z-10">Inscription</span>
-                <div
-                  className="absolute inset-0 bg-gradient-to-r from-orange-400/20 to-orange-600/20 opacity-0 
-                              group-hover:opacity-100 rounded-lg blur transition-opacity"
-                />
-              </Link>
-            </div>
-
-            {/* Profile Menu */}
-            <div className="relative">
-              <button
-                onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-                className="flex items-center gap-2 p-2 text-gray-300 hover:text-white rounded-lg hover:bg-gray-800/50 transition-colors"
-              >
-                <UserCircle className="h-6 w-6" />
-                <span className="text-sm">Albert Kengne</span>
-              </button>
-
-              {/* Dropdown Menu */}
-              <AnimatePresence>
-                {isProfileMenuOpen && (
-                  <motion.div
-                    ref={profileMenuRef}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 10 }}
-                    className="absolute right-0 mt-2 w-48 bg-gray-900 rounded-xl border border-gray-800/50 shadow-xl py-1 z-50"
-                  >
-                    <div className="px-4 py-3 border-b border-gray-800">
-                      <p className="text-sm text-white font-medium">
-                        Albert Kengne
-                      </p>
-                      <p className="text-xs text-gray-400">john@example.com</p>
-                    </div>
-
-                    <div className="py-1">
-                      <Link
-                        to="/profile"
-                        className="w-full px-4 py-2 text-sm text-gray-300 hover:text-white 
-                                  hover:bg-gray-800 flex items-center gap-2"
-                      >
-                        <UserCircle className="h-4 w-4" />
-                        Mon profil
-                      </Link>
-
-                      <Link
-                        to="/mes-billets"
-                        className="w-full px-4 py-2 text-sm text-gray-300 hover:text-white 
-                                  hover:bg-gray-800 flex items-center gap-2"
-                      >
-                        <UserCircle className="h-4 w-4" />
-                        Mes Billets
-                      </Link>
-
-                      <Link
-                        to="/settings"
-                        className="w-full px-4 py-2 text-sm text-gray-300 hover:text-white 
-                                  hover:bg-gray-800 flex items-center gap-2"
-                      >
-                        <Settings className="h-4 w-4" />
-                        Paramètres
-                      </Link>
-                    </div>
-
-                    <div className="border-t border-gray-800 py-1">
-                      <button
-                        onClick={() => {
-                          /* handle logout */
-                        }}
-                        className="w-full px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-gray-800 
-                                 flex items-center gap-2"
-                      >
-                        <LogOut className="h-4 w-4" />
-                        Déconnexion
-                      </button>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
+            {renderAuthButtons()}
           </div>
         </div>
       </div>

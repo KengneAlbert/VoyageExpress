@@ -3,6 +3,7 @@ import { RootState } from '../../app/store';
 import { authApi } from './authApi';
 
 interface UserData {
+  photoURL: any;
   id: string;
   email: string;
   first_name?: string;
