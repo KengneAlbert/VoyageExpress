@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import { Mail, Lock, Eye, EyeOff, AlertCircle } from "lucide-react";
 import AuthLayout from "./AuthLayout";
+import Logo from "../../../assets/logove.jpg";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -44,7 +45,7 @@ const Login = () => {
       <AuthLayout
         title="Bon retour!"
         subtitle="Nous sommes ravis de vous revoir"
-        imageSrc="/src/assets/images/auth-bg.jpg"
+        imageSrc={Logo}
       >
         <div className="flex flex-col items-left w-full">
           <form onSubmit={handleSubmit} className="w-full max-w-md space-y-6">

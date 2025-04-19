@@ -11,6 +11,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import AuthLayout from "./AuthLayout";
+import Logo from "../../../assets/logove.jpg";
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -56,7 +57,7 @@ const Register = () => {
       <AuthLayout
         title="Créer un compte"
         subtitle="Rejoignez VoyageExpress aujourd'hui"
-        imageSrc="src/assets/logove.jpg"
+        imageSrc={Logo}
       >
         <div className="flex flex-col items-center justify-center w-full max-w-lg mx-auto">
           <form onSubmit={handleSubmit} className="w-full space-y-6">

@@ -30,10 +30,10 @@ export const DESTINATIONS: Destination[] = [
     name: "Kribi",
     region: "Littoral",
     images: [
-      "https://images.pexels.com/photos/1802255/pexels-photo-1802255.jpeg",
-      "https://images.pexels.com/photos/1710795/pexels-photo-1710795.jpeg",
-      "https://images.pexels.com/photos/1659438/pexels-photo-1659438.jpeg",
-      "https://images.pexels.com/photos/1705254/pexels-photo-1705254.jpeg",
+      "https://images.pexels.com/photos/1450361/pexels-photo-1450361.jpeg",
+      "https://images.pexels.com/photos/1450353/pexels-photo-1450353.jpeg", 
+      "https://images.pexels.com/photos/1021073/pexels-photo-1021073.jpeg",
+      "https://images.pexels.com/photos/1835718/pexels-photo-1835718.jpeg"
     ],
     description:
       "Kribi, surnommée la ville paradisiaque du Cameroun, vous séduira par ses plages de sable doré, ses chutes spectaculaires de la Lobé qui se jettent directement dans l'océan, et sa délicieuse gastronomie maritime locale.",
@@ -174,10 +174,10 @@ export const DESTINATIONS: Destination[] = [
     name: "Bamenda",
     region: "Nord-Ouest",
     images: [
-      "https://images.unsplash.com/photo-1528732807373-ba48c09d6739?ixlib=rb-4.0.3",
-      "https://images.unsplash.com/photo-1528732807373-ba48c09d6739?ixlib=rb-4.0.3",
-      "https://images.unsplash.com/photo-1528732807373-ba48c09d6739?ixlib=rb-4.0.3",
-      "https://images.unsplash.com/photo-1528732807373-ba48c09d6739?ixlib=rb-4.0.3",
+      "https://images.pexels.com/photos/1450361/pexels-photo-1450361.jpeg",
+      "https://images.pexels.com/photos/1450353/pexels-photo-1450353.jpeg", 
+      "https://images.pexels.com/photos/1021073/pexels-photo-1021073.jpeg",
+      "https://images.pexels.com/photos/1835718/pexels-photo-1835718.jpeg"
     ],
     description:
       "Ville des hauts plateaux, Bamenda séduit par son climat frais, ses paysages montagneux et sa riche culture traditionnelle des Grassfields.",

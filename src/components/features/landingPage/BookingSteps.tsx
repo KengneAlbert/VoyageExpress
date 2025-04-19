@@ -1,18 +1,17 @@
 import { Search, CreditCard, Bus, Phone } from "lucide-react";
-
 const BOOKING_STEPS = [
   {
     icon: Search,
     title: "Recherchez votre trajet",
     description:
       "Sélectionnez votre ville de départ, d'arrivée et la date de voyage",
-    image: "</section>src/assets/searchform.png",
+    image: "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?w=800&h=600&fit=crop&auto=format",
   },
   {
     icon: CreditCard,
     title: "Réservez votre billet",
     description: "Choisissez votre siège et procédez au paiement sécurisé",
-    image: "src/assets/logove.jpg",
+    image: "https://images.unsplash.com/photo-1580048915913-4f8f5cb481c4?w=800&h=600&fit=crop&auto=format",
   },
   {
     icon: Bus,

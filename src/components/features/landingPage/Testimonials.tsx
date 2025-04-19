@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import { Star, StarHalf, Quote } from "lucide-react";
 import { motion } from "framer-motion";
+import Cabrel from "../../../assets/cabrel.jpg";
 
 const TESTIMONIALS = [
   {
     id: 1,
     name: "Sophie M.",
     role: "Voyageuse Régulière",
-    image: "src/assets/cabrel.jpg",
+    image: Cabrel,
     content:
       "Service exceptionnel ! La réservation en ligne est simple et rapide. Je recommande vivement VoyageExpress pour tous vos déplacements au Cameroun.",
     rating: 5,

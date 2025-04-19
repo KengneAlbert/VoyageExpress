@@ -28,6 +28,7 @@ import {
 } from "lucide-react";
 import { DESTINATIONS } from "./destinationData";
 import ShareModal from "../../common/ShareModal";
+import Logo from "../../../assets/logove.jpg";
 
 // Définition du type Bus localement pour éviter les problèmes d'import
 interface Bus {
@@ -223,7 +224,7 @@ const DestinationDetails: React.FC = () => {
       seatsAvailable: 25,
       type: "VIP",
       amenities: ["Climatisation", "WiFi", "USB", "Toilettes"],
-      logo: "/src/assets/logove.jpg", // Ajout du logo
+      logo: Logo, // Ajout du logo
     },
     {
       id: 2,
@@ -234,7 +235,7 @@ const DestinationDetails: React.FC = () => {
       seatsAvailable: 15,
       type: "Standard",
       amenities: ["Climatisation", "USB"],
-      logo: "/src/assets/logove.jpg", // Ajout du logo
+      logo: Logo, // Ajout du logo
     },
   ];
 

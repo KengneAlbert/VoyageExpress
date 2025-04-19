@@ -5,6 +5,8 @@ export const HERO_IMAGES = [
   "https://images.unsplash.com/photo-1468818438311-4bab781ab9b8?w=1920&h=1080&fit=crop&auto=format",
 ];
 
+import Logo from "../assets/logove.jpg";
+
 export const LANGUAGES = [
   {
     code: "fr",
@@ -113,19 +115,19 @@ export const TOURIST_DESTINATIONS = [
 export const PARTNERS = [
   {
     name: "Général Voyage",
-    logo: "src/assets/logove.jpg",
+    logo: Logo,
   },
   {
     name: "Garantie Express",
-    logo: "src/assets/logove.jpg",
+    logo: Logo,
   },
   {
     name: "Touristique Express",
-    logo: "src/assets/logove.jpg",
+    logo: Logo,
   },
   {
     name: "United Express",
-    logo: "src/assets/logove.jpg",
+    logo: Logo,
   },
 ];
 

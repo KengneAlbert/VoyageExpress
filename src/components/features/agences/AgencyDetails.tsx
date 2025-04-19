@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Star, Calendar, Clock, Info, Shield, Share2, MessageSquare, MessageCircle, Link2, Facebook, Twitter, Send, Building, Award, Users, Bus, MapPin, Phone, Mail, Globe, CheckCircle2, ThumbsUp 
+  Star, Calendar, Clock, Info, Shield, Share2, MessageSquare, MessageCircle, Link2, Facebook, Twitter, Send, Building, Award, Bus, MapPin, Phone, Mail, Globe, CheckCircle2, ThumbsUp 
 } from 'lucide-react';
 import { useParams } from 'react-router-dom';
 import { Post, PostComment } from '../../../types/post';
@@ -13,6 +13,7 @@ import { Review } from '../../../types/review';
 import { SAMPLE_REVIEWS } from '../../../data/sampleReviews';
 import { useReviews } from '../../../hooks/useReviews';
 import AgencyRoutes from './AgencyRoutes';
+import Logo from '../../../assets/logove.jpg';
 
 const AgencyDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -46,7 +47,7 @@ const AgencyDetails = () => {
 const agency = {
   id: 1,
   name: "Général Express",
-  logo: "src/assets/logove.jpg",
+  logo: Logo,
   rating: 4.8,
   trips: 150,
   description: "Leader dans le transport interurbain depuis plus de 15 ans.",

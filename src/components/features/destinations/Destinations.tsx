@@ -67,9 +67,9 @@ const Destinations = () => {
             >
               <div className="absolute inset-0 bg-black/50 mix-blend-multiply" />
               <img
-                src="https://images.unsplash.com/photo-1528732807373-ba48c09d6739?ixlib=rb-4.0.3"
-                alt="Cameroun paysage"
-                className="w-full h-full object-cover"
+              src="https://images.unsplash.com/photo-1489392191049-fc10c97e64b6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1867&q=80"
+              alt="Paysage du Cameroun"
+              className="w-full h-full object-cover"
               />
             </motion.div>
             <div className="absolute inset-0 bg-gradient-to-b from-gray-900/70 via-gray-900/50 to-gray-900/90" />

@@ -10,6 +10,15 @@ export interface Route {
 }
 
 export interface Agency {
-  // ...existing agency interface...
+  id: number;
+  name: string;
+  description?: string;
+  logo: string;
+  contactPhone: string;
+  contactEmail: string;
+  address: string;
+  rating?: number;
+  reviewCount?: number;
+  isVerified?: boolean;
   routes: Route[];
 }

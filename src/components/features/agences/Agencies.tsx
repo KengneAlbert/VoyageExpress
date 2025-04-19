@@ -2,12 +2,13 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Search, MapPin, Phone, Mail, Star, ArrowUpRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import Logo from "../../../assets/logove.jpg";
 
 const AGENCIES = [
   {
     id: 1,
     name: "Général Voyage",
-    logo: "src/assets/logove.jpg",
+    logo: Logo,
     rating: 4.8,
     trips: 150,
     destinations: ["Douala", "Yaoundé", "Bafoussam"],
@@ -19,7 +20,7 @@ const AGENCIES = [
   {
     id: 2,
     name: "United Express",
-    logo: "src/assets/logove.jpg",
+    logo: Logo,
     rating: 4.6,
     trips: 120,
     destinations: ["Douala", "Yaoundé", "Bafoussam"],
@@ -31,7 +32,7 @@ const AGENCIES = [
   {
     id: 3,
     name: "Bluebird",
-    logo: "src/assets/logove.jpg",
+    logo: Logo,
     rating: 4.4,
     trips: 100,
     destinations: ["Douala", "Yaoundé", "Bafoussam"],

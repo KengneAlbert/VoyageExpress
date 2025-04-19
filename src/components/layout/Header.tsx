@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import Logo from "../../assets/logove.jpg";
 import {
   Menu,
   X,
@@ -63,7 +64,7 @@ const Header = () => {
           {/* Logo and Brand */}
           <Link to="/" className="flex items-center space-x-3 min-w-[200px]">
             <img
-              src="/src/assets/logove.jpg"
+              src={Logo}
               alt="Logo"
               className="h-10 w-10 sm:h-12 sm:w-12 rounded-full object-cover border-2 border-orange-500"
             />

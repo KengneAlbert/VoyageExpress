@@ -259,7 +259,12 @@ const PaymentSuccess = () => {
       <div className="max-w-3xl mx-auto">
         {/* Success Message - Plus compact sur mobile */}
         <motion.div className="text-center mb-4 sm:mb-8 relative">
-          {/* ...existing success message content... */}
+            <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            className="space-y-4"
+            ></motion.div>
           <div
             className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-full 
                          bg-gradient-to-br from-green-400/20 to-green-500/20 mb-3 sm:mb-4"

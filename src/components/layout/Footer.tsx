@@ -1,4 +1,5 @@
 import React from "react";
+import Logo from "../../assets/logove.jpg";
 import {
   Facebook,
   Twitter,
@@ -21,7 +22,7 @@ const Footer = () => {
           <div>
             <div className="flex items-center space-x-3 mb-6">
               <img
-                src="src\assets\logove.jpg"
+                src={Logo}
                 alt="VoyageExpress Logo"
                 className="h-12 w-12 rounded-full object-cover"
               />
