@@ -1,5 +1,11 @@
 import React, { useState } from "react";
-import { MapPin, Search, ArrowLeftRight, Users, ChevronDown } from "lucide-react";
+import {
+  MapPin,
+  Search,
+  ArrowLeftRight,
+  Users,
+  ChevronDown,
+} from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import CityAutocomplete from "./CityAutocomplete";
 import { useNavigate } from "react-router-dom";
@@ -20,7 +26,7 @@ const SearchForm: React.FC<SearchFormProps> = ({ defaultValues }) => {
   // Modifier l'état initial pour inclure la date du jour
   const [formData, setFormData] = useState<SearchFormData>({
     ...defaultValues,
-    date: new Date().toISOString().split('T')[0] // Format YYYY-MM-DD
+    date: new Date().toISOString().split("T")[0], // Format YYYY-MM-DD
   });
   const [errors, setErrors] = useState<Partial<SearchFormData>>({});
   const [isSearching, setIsSearching] = useState(false);
@@ -31,12 +37,12 @@ const SearchForm: React.FC<SearchFormProps> = ({ defaultValues }) => {
     e.preventDefault(); // Empêche le formulaire de se soumettre
     const prevDeparture = formData.departure;
     const prevDestination = formData.destination;
-    
+
     // Mise à jour directe sans utiliser le state précédent
     setFormData({
       ...formData,
       departure: prevDestination,
-      destination: prevDeparture
+      destination: prevDeparture,
     });
   };
 
@@ -74,17 +80,17 @@ const SearchForm: React.FC<SearchFormProps> = ({ defaultValues }) => {
     if (validateForm()) {
       setIsSearching(true);
       try {
-        console.log('Form data being sent:', formData);
-        
-        await new Promise(resolve => setTimeout(resolve, 1000)); // Simulation d'un appel API
-        
-        navigate('/search-results', {
+        console.log("Form data being sent:", formData);
+
+        await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulation d'un appel API
+
+        navigate("/search-results", {
           state: {
-            searchData: formData
-          }
+            searchData: formData,
+          },
         });
       } catch (error) {
-        console.error('Error during search:', error);
+        console.error("Error during search:", error);
         // Ajouter ici la gestion des erreurs si nécessaire
       } finally {
         setIsSearching(false);
@@ -109,7 +115,9 @@ const SearchForm: React.FC<SearchFormProps> = ({ defaultValues }) => {
               <CityAutocomplete
                 placeholder="Ville de départ"
                 value={formData.departure}
-                onChange={(value) => setFormData({ ...formData, departure: value })}
+                onChange={(value) =>
+                  setFormData({ ...formData, departure: value })
+                }
                 icon={<MapPin className="h-5 w-5 text-orange-400" />}
                 error={errors.departure}
               />
@@ -131,21 +139,28 @@ const SearchForm: React.FC<SearchFormProps> = ({ defaultValues }) => {
             {/* Ville d'arrivée */}
             <div className="relative">
               {/* Bouton d'échange pour mobile */}
-              <div className="lg:hidden absolute -top-3 left-1/2 -translate-x-1/2 z-10">
-                <button
+              <div className="lg:hidden absolute -top-6 left-1/2 -translate-x-1/2 z-20">
+                <motion.button
                   type="button"
                   onClick={swapCities}
-                  className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center
-                           shadow-lg hover:bg-orange-600 transition-colors cursor-pointer
-                           focus:outline-none focus:ring-2 focus:ring-orange-500" // Ajout focus states
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="w-8 h-8 bg-gradient-to-r from-orange-500 to-orange-600 
+                           rounded-full flex items-center justify-center
+                           shadow-lg hover:shadow-orange-500/25 
+                           transition-all duration-300 cursor-pointer
+                           focus:outline-none focus:ring-2 focus:ring-orange-500
+                           border-4 border-gray-900"
                 >
                   <ArrowLeftRight className="w-4 h-4 text-white" />
-                </button>
+                </motion.button>
               </div>
               <CityAutocomplete
                 placeholder="Ville d'arrivée"
                 value={formData.destination}
-                onChange={(value) => setFormData({ ...formData, destination: value })}
+                onChange={(value) =>
+                  setFormData({ ...formData, destination: value })
+                }
                 icon={<MapPin className="h-5 w-5 text-orange-400" />}
                 error={errors.destination}
               />
@@ -173,7 +188,10 @@ const SearchForm: React.FC<SearchFormProps> = ({ defaultValues }) => {
             >
               <div className="flex items-center gap-2">
                 <Users className="w-5 h-5 text-orange-400" />
-                <span>{formData.passengers} voyageur{formData.passengers > 1 ? 's' : ''}</span>
+                <span>
+                  {formData.passengers} voyageur
+                  {formData.passengers > 1 ? "s" : ""}
+                </span>
               </div>
               <ChevronDown className="w-5 h-5 text-gray-400" />
             </button>
@@ -196,12 +214,13 @@ const SearchForm: React.FC<SearchFormProps> = ({ defaultValues }) => {
                         setIsPassengersOpen(false);
                       }}
                       className={`w-full px-4 py-2 text-left rounded-md transition-colors
-                                ${formData.passengers === num
-                          ? 'bg-orange-500/20 text-orange-400'
-                          : 'text-gray-400 hover:bg-gray-800'
-                        }`}
+                                ${
+                                  formData.passengers === num
+                                    ? "bg-orange-500/20 text-orange-400"
+                                    : "text-gray-400 hover:bg-gray-800"
+                                }`}
                     >
-                      {num} voyageur{num > 1 ? 's' : ''}
+                      {num} voyageur{num > 1 ? "s" : ""}
                     </button>
                   ))}
                 </motion.div>
@@ -226,7 +245,6 @@ const SearchForm: React.FC<SearchFormProps> = ({ defaultValues }) => {
             <>
               <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
               <span>Recherche en cours...</span>
-              
             </>
           ) : (
             <>
