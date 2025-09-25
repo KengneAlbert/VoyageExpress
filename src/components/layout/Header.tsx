@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import Logo from "../../assets/logove.jpg";
 import {
   Menu,
@@ -21,6 +22,12 @@ const Header = () => {
   const [currentLanguage, setCurrentLanguage] = useState("FR");
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const profileMenuRef = useRef<HTMLDivElement>(null);
+  const profileButtonRef = useRef<HTMLButtonElement>(null);
+  const [profilePos, setProfilePos] = useState<{
+    top: number;
+    left: number;
+    width: number;
+  }>({ top: 0, left: 0, width: 0 });
 
   const languages = [
     { code: "FR", label: "Français" },
@@ -35,32 +42,49 @@ const Header = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Add click outside handler
+  // Profile dropdown: click outside + positioning
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        profileMenuRef.current &&
-        !profileMenuRef.current.contains(event.target as Node)
-      ) {
-        setIsProfileMenuOpen(false);
-      }
+    if (!isProfileMenuOpen) return;
+    const updatePos = () => {
+      const rect = profileButtonRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      const width = 192; // w-48
+      const left = Math.min(
+        Math.max(8, rect.right - width),
+        window.innerWidth - width - 8
+      );
+      const top = Math.min(window.innerHeight - 300, rect.bottom + 8);
+      setProfilePos({ top, left, width });
     };
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as Node;
+      const inButton = !!profileButtonRef.current?.contains(target);
+      const inPopup = !!profileMenuRef.current?.contains(target);
+      if (!inButton && !inPopup) setIsProfileMenuOpen(false);
+    };
+    updatePos();
+    window.addEventListener("resize", updatePos);
+    window.addEventListener("scroll", updatePos, true);
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+    return () => {
+      window.removeEventListener("resize", updatePos);
+      window.removeEventListener("scroll", updatePos, true);
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isProfileMenuOpen]);
 
   return (
     <motion.header
       initial={{ y: -100 }}
       animate={{ y: 0 }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-[90] transition-all duration-300 w-full overflow-x-hidden ${
         isScrolled
           ? "bg-gray-900/95 backdrop-blur-md shadow-lg"
           : "bg-transparent"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+        <div className="flex items-center justify-between h-20 w-full">
           {/* Logo and Brand */}
           <Link to="/" className="flex items-center space-x-3 min-w-[200px]">
             <img
@@ -168,6 +192,7 @@ const Header = () => {
             {/* Profile Menu */}
             <div className="relative">
               <button
+                ref={profileButtonRef}
                 onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
                 className="flex items-center gap-2 p-2 text-gray-300 hover:text-white rounded-lg hover:bg-gray-800/50 transition-colors"
               >
@@ -176,66 +201,76 @@ const Header = () => {
               </button>
 
               {/* Dropdown Menu */}
-              <AnimatePresence>
-                {isProfileMenuOpen && (
-                  <motion.div
-                    ref={profileMenuRef}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 10 }}
-                    className="absolute right-0 mt-2 w-48 bg-gray-900 rounded-xl border border-gray-800/50 shadow-xl py-1 z-50"
-                  >
-                    <div className="px-4 py-3 border-b border-gray-800">
-                      <p className="text-sm text-white font-medium">
-                        Albert Kengne
-                      </p>
-                      <p className="text-xs text-gray-400">john@example.com</p>
-                    </div>
+              {isProfileMenuOpen &&
+                createPortal(
+                  <AnimatePresence>
+                    <motion.div
+                      ref={profileMenuRef}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                      style={{
+                        position: "fixed",
+                        top: profilePos.top,
+                        left: profilePos.left,
+                        width: profilePos.width,
+                      }}
+                      className="bg-gray-900 rounded-xl border border-gray-800/50 shadow-xl py-1 z-[1100]"
+                    >
+                      <div className="px-4 py-3 border-b border-gray-800">
+                        <p className="text-sm text-white font-medium">
+                          Albert Kengne
+                        </p>
+                        <p className="text-xs text-gray-400">
+                          john@example.com
+                        </p>
+                      </div>
 
-                    <div className="py-1">
-                      <Link
-                        to="/profile"
-                        className="w-full px-4 py-2 text-sm text-gray-300 hover:text-white 
-                                  hover:bg-gray-800 flex items-center gap-2"
-                      >
-                        <UserCircle className="h-4 w-4" />
-                        Mon profil
-                      </Link>
+                      <div className="py-1">
+                        <Link
+                          to="/profile"
+                          className="w-full px-4 py-2 text-sm text-gray-300 hover:text-white 
+                                    hover:bg-gray-800 flex items-center gap-2"
+                        >
+                          <UserCircle className="h-4 w-4" />
+                          Mon profil
+                        </Link>
 
-                      <Link
-                        to="/mes-billets"
-                        className="w-full px-4 py-2 text-sm text-gray-300 hover:text-white 
-                                  hover:bg-gray-800 flex items-center gap-2"
-                      >
-                        <UserCircle className="h-4 w-4" />
-                        Mes Billets
-                      </Link>
+                        <Link
+                          to="/mes-billets"
+                          className="w-full px-4 py-2 text-sm text-gray-300 hover:text-white 
+                                    hover:bg-gray-800 flex items-center gap-2"
+                        >
+                          <UserCircle className="h-4 w-4" />
+                          Mes Billets
+                        </Link>
 
-                      <Link
-                        to="/settings"
-                        className="w-full px-4 py-2 text-sm text-gray-300 hover:text-white 
-                                  hover:bg-gray-800 flex items-center gap-2"
-                      >
-                        <Settings className="h-4 w-4" />
-                        Paramètres
-                      </Link>
-                    </div>
+                        <Link
+                          to="/settings"
+                          className="w-full px-4 py-2 text-sm text-gray-300 hover:text-white 
+                                    hover:bg-gray-800 flex items-center gap-2"
+                        >
+                          <Settings className="h-4 w-4" />
+                          Paramètres
+                        </Link>
+                      </div>
 
-                    <div className="border-t border-gray-800 py-1">
-                      <button
-                        onClick={() => {
-                          /* handle logout */
-                        }}
-                        className="w-full px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-gray-800 
-                                 flex items-center gap-2"
-                      >
-                        <LogOut className="h-4 w-4" />
-                        Déconnexion
-                      </button>
-                    </div>
-                  </motion.div>
+                      <div className="border-t border-gray-800 py-1">
+                        <button
+                          onClick={() => {
+                            /* handle logout */
+                          }}
+                          className="w-full px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-gray-800 
+                                   flex items-center gap-2"
+                        >
+                          <LogOut className="h-4 w-4" />
+                          Déconnexion
+                        </button>
+                      </div>
+                    </motion.div>
+                  </AnimatePresence>,
+                  document.body
                 )}
-              </AnimatePresence>
             </div>
           </div>
         </div>

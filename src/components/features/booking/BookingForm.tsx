@@ -29,16 +29,30 @@ const BookingForm = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const trip = location.state?.trip;
+  const searchData = location.state?.searchData as
+    | {
+        departure: string;
+        destination: string;
+        date: string;
+        returnDate?: string;
+        passengers: number;
+        isRoundTrip: boolean;
+      }
+    | undefined;
 
-  const [passengers, setPassengers] = useState<PassengerInfo[]>([
-    {
+  const initialPassengerCount = Math.max(
+    1,
+    Math.min(12, searchData?.passengers || 1)
+  );
+  const [passengers, setPassengers] = useState<PassengerInfo[]>(
+    Array.from({ length: initialPassengerCount }, () => ({
       firstName: "",
       lastName: "",
       email: "",
       phone: "",
       idNumber: "",
-    },
-  ]);
+    }))
+  );
 
   const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
   const bookedSeats = ["A1", "B4", "C7", "D10"]; // Example of booked seats
@@ -91,14 +105,10 @@ const BookingForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validate all passengers data
-    const isValid = passengers.every(p => 
-      p.firstName && 
-      p.lastName && 
-      p.email && 
-      p.phone && 
-      p.idNumber
+    const isValid = passengers.every(
+      (p) => p.firstName && p.lastName && p.email && p.phone && p.idNumber
     );
 
     // Validate seat selection
@@ -107,14 +117,23 @@ const BookingForm = () => {
     if (isValid && hasAllSeats) {
       const bookingData = {
         trip,
+        tripType: {
+          isRoundTrip: !!searchData?.isRoundTrip,
+          departureDate: searchData?.date,
+          returnDate: searchData?.returnDate || undefined,
+        },
         passengers,
         selectedSeats,
-        totalPrice: trip?.price * passengers.length + (trip?.isVip ? 2000 : 0)
+        totalPrice:
+          (trip?.price || 0) *
+            passengers.length *
+            (searchData?.isRoundTrip ? 2 : 1) +
+          (trip?.isVip ? 2000 : 0),
       };
 
       // Navigate to payment page with booking data
-      navigate('/payment', { 
-        state: { bookingData }
+      navigate("/payment", {
+        state: { bookingData },
       });
     }
   };
@@ -129,8 +148,12 @@ const BookingForm = () => {
 
   // Add step navigation controls
   const handleNextStep = () => {
-    if (activeStep === 1 && passengers.every(p => 
-      p.firstName && p.lastName && p.email && p.phone && p.idNumber)) {
+    if (
+      activeStep === 1 &&
+      passengers.every(
+        (p) => p.firstName && p.lastName && p.email && p.phone && p.idNumber
+      )
+    ) {
       setActiveStep(2);
     } else if (activeStep === 2 && selectedSeats.length === passengers.length) {
       setActiveStep(3);
@@ -144,8 +167,10 @@ const BookingForm = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] 
-                    from-orange-900/20 via-gray-900 to-gray-900 pt-24 pb-12">
+    <div
+      className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] 
+                    from-orange-900/20 via-gray-900 to-gray-900 pt-24 pb-12"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Progress Steps */}
         <div className="mb-12">
@@ -157,13 +182,15 @@ const BookingForm = () => {
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setActiveStep(step.id)}
                   className={`flex flex-col items-center ${
-                    activeStep >= step.id ? 'text-orange-400' : 'text-gray-500'
+                    activeStep >= step.id ? "text-orange-400" : "text-gray-500"
                   }`}
                 >
-                  <div className={`w-12 h-12 rounded-full border-2 flex items-center justify-center
-                    ${activeStep >= step.id 
-                      ? 'border-orange-400 bg-orange-400/10' 
-                      : 'border-gray-700 bg-gray-800/50'
+                  <div
+                    className={`w-12 h-12 rounded-full border-2 flex items-center justify-center
+                    ${
+                      activeStep >= step.id
+                        ? "border-orange-400 bg-orange-400/10"
+                        : "border-gray-700 bg-gray-800/50"
                     }`}
                   >
                     {step.icon}
@@ -171,9 +198,11 @@ const BookingForm = () => {
                   <span className="mt-2 text-sm font-medium">{step.title}</span>
                 </motion.button>
                 {idx < steps.length - 1 && (
-                  <div className={`w-24 h-0.5 ${
-                    activeStep > step.id ? 'bg-orange-400' : 'bg-gray-700'
-                  }`} />
+                  <div
+                    className={`w-24 h-0.5 ${
+                      activeStep > step.id ? "bg-orange-400" : "bg-gray-700"
+                    }`}
+                  />
                 )}
               </React.Fragment>
             ))}
@@ -181,10 +210,7 @@ const BookingForm = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-[1fr,400px] gap-8">
-          <motion.div 
-            layout
-            className="space-y-6"
-          >
+          <motion.div layout className="space-y-6">
             {/* Trip Summary Card */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -195,10 +221,16 @@ const BookingForm = () => {
               <div className="p-6 border-b border-gray-800/50">
                 <div className="flex items-center gap-4">
                   <div className="w-16 h-16 rounded-xl overflow-hidden">
-                    <img src={trip?.logo} alt={trip?.agency} className="w-full h-full object-cover" />
+                    <img
+                      src={trip?.logo}
+                      alt={trip?.agency}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                   <div>
-                    <h2 className="text-xl font-bold text-white mb-1">{trip?.agency}</h2>
+                    <h2 className="text-xl font-bold text-white mb-1">
+                      {trip?.agency}
+                    </h2>
                     <div className="flex items-center gap-2 text-gray-400">
                       <MapPin className="w-4 h-4" />
                       <span>{trip?.departure.city}</span>
@@ -221,7 +253,9 @@ const BookingForm = () => {
                     <Clock className="w-4 h-4" />
                     <span>Heure</span>
                   </div>
-                  <p className="text-white font-medium">{trip?.departureTime}</p>
+                  <p className="text-white font-medium">
+                    {trip?.departureTime}
+                  </p>
                 </div>
               </div>
             </motion.div>
@@ -397,8 +431,16 @@ const BookingForm = () => {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={handleNextStep}
-                  disabled={!passengers.every(p => 
-                    p.firstName && p.lastName && p.email && p.phone && p.idNumber)}
+                  disabled={
+                    !passengers.every(
+                      (p) =>
+                        p.firstName &&
+                        p.lastName &&
+                        p.email &&
+                        p.phone &&
+                        p.idNumber
+                    )
+                  }
                   className="px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 
                             rounded-xl text-white font-medium shadow-lg shadow-orange-500/20
                             hover:shadow-orange-500/30 transition-all flex items-center gap-2
@@ -438,7 +480,6 @@ const BookingForm = () => {
                 </motion.button>
               </motion.div>
             )}
-
           </motion.div>
 
           {/* Price Summary */}
@@ -475,7 +516,10 @@ const BookingForm = () => {
                       </span>
                     </div>
                     <span className="text-white font-medium">
-                      {trip?.price * passengers.length} FCFA
+                      {(trip?.price || 0) *
+                        passengers.length *
+                        (searchData?.isRoundTrip ? 2 : 1)}{" "}
+                      FCFA
                     </span>
                   </div>
                 </div>
@@ -520,13 +564,15 @@ const BookingForm = () => {
                 <div className="mt-6 pt-6 border-t border-gray-700/50">
                   <div className="flex justify-between items-center">
                     <span className="text-lg text-gray-300 font-medium">
-                      Total
+                      Total {searchData?.isRoundTrip ? "(A/R)" : ""}
                     </span>
                     <span
                       className="text-2xl font-bold bg-gradient-to-r from-orange-400 to-orange-600 
                          bg-clip-text text-transparent"
                     >
-                      {trip?.price * passengers.length +
+                      {(trip?.price || 0) *
+                        passengers.length *
+                        (searchData?.isRoundTrip ? 2 : 1) +
                         (trip?.isVip ? 2000 : 0)}{" "}
                       FCFA
                     </span>
@@ -538,13 +584,16 @@ const BookingForm = () => {
                   onClick={handleSubmit}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  disabled={!passengers.every(p => 
-                    p.firstName && 
-                    p.lastName && 
-                    p.email && 
-                    p.phone && 
-                    p.idNumber
-                  ) || selectedSeats.length !== passengers.length}
+                  disabled={
+                    !passengers.every(
+                      (p) =>
+                        p.firstName &&
+                        p.lastName &&
+                        p.email &&
+                        p.phone &&
+                        p.idNumber
+                    ) || selectedSeats.length !== passengers.length
+                  }
                   className="w-full mt-6 py-4 px-6 bg-gradient-to-r from-orange-500 to-orange-600 
                  rounded-xl text-white font-semibold shadow-lg shadow-orange-500/25
                  hover:shadow-orange-500/40 transition-all duration-300

@@ -1,19 +1,16 @@
-import React, { useRef } from "react";
+import { useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   MapPin,
   Calendar,
-  Clock,
   User,
   Download,
   Printer,
   Bus,
   CheckCircle,
-  Shield,
   Info,
   Share2,
-  Home,
 } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react"; // Modifié ici pour utiliser QRCodeSVG au lieu de QRCode
 import html2canvas from "html2canvas";
@@ -47,6 +44,11 @@ interface BookingData {
   passengers: Passenger[];
   selectedSeats: string[];
   totalPrice: number;
+  tripType?: {
+    isRoundTrip: boolean;
+    departureDate?: string;
+    returnDate?: string;
+  };
 }
 
 // Ajout des éléments de sécurité
@@ -130,16 +132,16 @@ const PaymentSuccess = () => {
 
   const { bookingData } = location.state as { bookingData: BookingData };
 
-  const handleDownload = async () => {
-    if (ticketRef.current) {
-      const canvas = await html2canvas(ticketRef.current);
-      const url = canvas.toDataURL("image/png");
-      const link = document.createElement("a");
-      link.download = "ticket.png";
-      link.href = url;
-      link.click();
-    }
-  };
+  // const handleDownload = async () => {
+  //   if (ticketRef.current) {
+  //     const canvas = await html2canvas(ticketRef.current);
+  //     const url = canvas.toDataURL("image/png");
+  //     const link = document.createElement("a");
+  //     link.download = "ticket.png";
+  //     link.href = url;
+  //     link.click();
+  //   }
+  // };
 
   const handlePrint = () => {
     window.print();
@@ -259,12 +261,12 @@ const PaymentSuccess = () => {
       <div className="max-w-3xl mx-auto">
         {/* Success Message - Plus compact sur mobile */}
         <motion.div className="text-center mb-4 sm:mb-8 relative">
-            <motion.div
+          <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.5 }}
             className="space-y-4"
-            ></motion.div>
+          ></motion.div>
           <div
             className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-full 
                          bg-gradient-to-br from-green-400/20 to-green-500/20 mb-3 sm:mb-4"
@@ -420,13 +422,28 @@ const PaymentSuccess = () => {
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 text-gray-400">
                     <Calendar className="w-4 h-4" />
-                    <span className="text-sm font-medium">Date et Heure</span>
+                    <span className="text-sm font-medium">
+                      {bookingData.tripType?.isRoundTrip
+                        ? "Dates et Heure (A/R)"
+                        : "Date et Heure"}
+                    </span>
                   </div>
-                  <p className="text-lg font-medium text-white">
-                    {formatDate(bookingData.trip.date)}
-                    <span className="text-orange-400 mx-2">•</span>
-                    {bookingData.trip.departureTime}
-                  </p>
+                  <div className="text-lg font-medium text-white space-y-1">
+                    <p>
+                      {formatDate(
+                        bookingData.tripType?.departureDate ||
+                          bookingData.trip.date
+                      )}
+                      <span className="text-orange-400 mx-2">•</span>
+                      {bookingData.trip.departureTime}
+                    </p>
+                    {bookingData.tripType?.isRoundTrip &&
+                      bookingData.tripType?.returnDate && (
+                        <p className="text-gray-300 text-base">
+                          Retour: {formatDate(bookingData.tripType.returnDate)}
+                        </p>
+                      )}
+                  </div>
                 </div>
               </div>
 

@@ -83,17 +83,19 @@ const Payment = () => {
         ...bookingData,
         trip: {
           ...bookingData.trip,
-          date: bookingData.trip.date ? new Date(bookingData.trip.date).toISOString() : new Date().toISOString()
-        }
+          date: bookingData.trip.date
+            ? new Date(bookingData.trip.date).toISOString()
+            : new Date().toISOString(),
+        },
       };
 
       // Simulation du délai de paiement
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
       // Navigation vers la page de succès
-      navigate('/payment-success', {
+      navigate("/payment-success", {
         state: { bookingData: formattedBookingData },
-        replace: true
+        replace: true,
       });
     } catch (error) {
       console.error("Payment failed:", error);
@@ -314,6 +316,9 @@ const Payment = () => {
                         <span>{bookingData?.trip?.departure.city}</span>
                         <span>→</span>
                         <span>{bookingData?.trip?.destination.city}</span>
+                        {bookingData?.tripType?.isRoundTrip && (
+                          <span className="text-orange-400 ml-2">(A/R)</span>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -329,7 +334,9 @@ const Payment = () => {
                     <span>{bookingData?.selectedSeats?.join(", ")}</span>
                   </div>
                   <div className="flex justify-between text-white font-medium pt-3 border-t border-gray-800">
-                    <span>Total</span>
+                    <span>
+                      Total {bookingData?.tripType?.isRoundTrip ? "(A/R)" : ""}
+                    </span>
                     <span className="text-orange-400">
                       {bookingData?.totalPrice} FCFA
                     </span>

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search } from "lucide-react";
 import { useLocation } from "react-router-dom";
@@ -62,13 +62,15 @@ const SearchResults = () => {
   const location = useLocation();
   const searchData = location.state?.searchData;
 
-  console.log('Search Data received:', searchData);
+  console.log("Search Data received:", searchData);
 
   const defaultValues = location.state?.searchData || {
     departure: "",
     destination: "",
     date: "",
-    passengers: 1
+    returnDate: "",
+    passengers: 1,
+    isRoundTrip: false,
   };
 
   const [sortType, setSortType] = useState("");
@@ -101,7 +103,7 @@ const SearchResults = () => {
     }
 
     return sorted;
-  }, [trips, sortType]);
+  }, [sortType]);
 
   const handleFilterChange = (filters: typeof activeFilters) => {
     setIsLoading(true);
@@ -110,26 +112,31 @@ const SearchResults = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-950 to-gray-900">
+    <div className="min-h-screen bg-gradient-to-b from-gray-950 to-gray-900 overflow-x-hidden">
       <Header />
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
-        <div className="grid grid-cols-1 lg:grid-cols-[420px,1fr] gap-8">
-          {/* Sidebar */}
-          <aside className="lg:sticky lg:top-24 h-fit">
-            <SearchForm defaultValues={defaultValues} />
+      <main className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 pt-24 pb-12 w-full">
+        <div className="grid grid-cols-1 xl:grid-cols-[380px,1fr] gap-4 lg:gap-8">
+          {/* Sidebar - Hidden on mobile, shown as modal or collapsible */}
+          <aside className="xl:sticky xl:top-24 h-fit order-2 xl:order-1">
+            <div className="lg:block">
+              <SearchForm defaultValues={defaultValues} />
+            </div>
           </aside>
 
           {/* Results Section */}
-          <div>
+          <div className="order-1 xl:order-2 w-full min-w-0">
             {/* Sticky Filter Section */}
-            <div className="sticky top-20 z-30 -mx-4 sm:-mx-6 lg:-mx-8 mb-6">
-              <div className="bg-gray-950/80 backdrop-blur-md px-4 sm:px-6 lg:px-8 py-4">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-2xl font-bold text-white">
+            <div className="sticky top-20 z-30 -mx-3 sm:-mx-4 lg:-mx-8 mb-4 lg:mb-6">
+              <div className="bg-gray-950/90 backdrop-blur-md px-3 sm:px-4 lg:px-8 py-3 sm:py-4">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3 sm:mb-4 gap-2 sm:gap-4">
+                  <h2 className="text-lg sm:text-2xl font-bold text-white">
                     Résultats ({trips.length})
                   </h2>
                 </div>
-                <FilterBar onFilterChange={handleFilterChange} onSort={(type) => setSortType(type)} />
+                <FilterBar
+                  onFilterChange={handleFilterChange}
+                  onSort={(type) => setSortType(type)}
+                />
               </div>
             </div>
 
@@ -140,12 +147,12 @@ const SearchResults = () => {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="space-y-4"
+                  className="space-y-3 sm:space-y-4"
                 >
                   {[...Array(3)].map((_, i) => (
                     <div
                       key={i}
-                      className="h-48 bg-gray-800/50 rounded-xl animate-pulse"
+                      className="h-32 sm:h-40 lg:h-48 bg-gray-800/50 rounded-xl animate-pulse"
                     />
                   ))}
                 </motion.div>
@@ -154,7 +161,7 @@ const SearchResults = () => {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="grid gap-4"
+                  className="grid gap-3 sm:gap-4"
                 >
                   {sortedTrips.map((trip, index) => (
                     <motion.div
@@ -166,7 +173,7 @@ const SearchResults = () => {
                         transition: { delay: index * 0.1 },
                       }}
                     >
-                      <TripCard trip={trip} />
+                      <TripCard trip={trip} searchData={defaultValues} />
                     </motion.div>
                   ))}
                 </motion.div>
@@ -175,13 +182,13 @@ const SearchResults = () => {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="flex flex-col items-center justify-center py-12 text-center"
+                  className="flex flex-col items-center justify-center py-8 sm:py-12 text-center px-4"
                 >
-                  <Search className="h-12 w-12 text-gray-600 mb-4" />
-                  <h3 className="text-xl font-medium text-white mb-2">
+                  <Search className="h-10 sm:h-12 w-10 sm:w-12 text-gray-600 mb-3 sm:mb-4" />
+                  <h3 className="text-lg sm:text-xl font-medium text-white mb-2">
                     Aucun résultat trouvé
                   </h3>
-                  <p className="text-gray-400">
+                  <p className="text-sm sm:text-base text-gray-400">
                     Essayez de modifier vos critères de recherche
                   </p>
                 </motion.div>

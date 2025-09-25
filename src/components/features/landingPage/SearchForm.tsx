@@ -9,13 +9,15 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import CityAutocomplete from "./CityAutocomplete";
 import { useNavigate } from "react-router-dom";
-import { DatePicker } from "../../common/DatePicker";
+import { DatePicker } from "../../common/DatePicker/index";
 
 interface SearchFormData {
   departure: string;
   destination: string;
   date: string;
+  returnDate?: string;
   passengers: number;
+  isRoundTrip: boolean;
 }
 
 interface SearchFormProps {
@@ -27,6 +29,8 @@ const SearchForm: React.FC<SearchFormProps> = ({ defaultValues }) => {
   const [formData, setFormData] = useState<SearchFormData>({
     ...defaultValues,
     date: new Date().toISOString().split("T")[0], // Format YYYY-MM-DD
+    returnDate: "",
+    isRoundTrip: false,
   });
   const [errors, setErrors] = useState<Partial<SearchFormData>>({});
   const [isSearching, setIsSearching] = useState(false);
@@ -71,6 +75,20 @@ const SearchForm: React.FC<SearchFormProps> = ({ defaultValues }) => {
       newErrors.date = "La date ne peut pas être dans le passé";
     }
 
+    // Validation pour aller-retour
+    if (formData.isRoundTrip) {
+      if (!formData.returnDate) {
+        newErrors.returnDate = "Date de retour requise";
+      } else {
+        const returnDate = new Date(formData.returnDate);
+        returnDate.setHours(0, 0, 0, 0);
+        if (returnDate < selectedDate) {
+          newErrors.returnDate =
+            "La date de retour doit être après la date de départ";
+        }
+      }
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -103,13 +121,13 @@ const SearchForm: React.FC<SearchFormProps> = ({ defaultValues }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="max-w-5xl mx-auto bg-gradient-to-br from-gray-800/80 to-gray-900/80 
-                 backdrop-blur-xl p-6 rounded-xl border border-white/10 shadow-xl"
+      className="w-full max-w-7xl mx-auto bg-gradient-to-br from-gray-800/80 to-gray-900/80 
+  backdrop-blur-xl p-4 sm:p-6 rounded-xl border border-white/10 shadow-xl overflow-visible"
     >
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="flex flex-col lg:flex-row gap-4">
+      <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6 w-full">
+        <div className="flex flex-col xl:flex-row gap-4 w-full">
           {/* Villes Section */}
-          <div className="flex-1 grid grid-cols-1 lg:grid-cols-[1fr,auto,1fr] gap-4 items-center">
+          <div className="flex-1 grid grid-cols-1 xl:grid-cols-[1fr,auto,1fr] gap-4 items-center">
             {/* Ville de départ */}
             <div className="relative">
               <CityAutocomplete
@@ -124,13 +142,13 @@ const SearchForm: React.FC<SearchFormProps> = ({ defaultValues }) => {
             </div>
 
             {/* Bouton d'échange pour desktop */}
-            <div className="hidden lg:flex justify-center">
+            <div className="hidden xl:flex justify-center">
               <button
                 type="button"
                 onClick={swapCities}
                 className="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center
                          shadow-lg hover:bg-orange-600 transition-colors z-20 cursor-pointer
-                         focus:outline-none focus:ring-2 focus:ring-orange-500" // Ajout focus states
+                         focus:outline-none focus:ring-2 focus:ring-orange-500"
               >
                 <ArrowLeftRight className="w-5 h-5 text-white" />
               </button>
@@ -138,8 +156,8 @@ const SearchForm: React.FC<SearchFormProps> = ({ defaultValues }) => {
 
             {/* Ville d'arrivée */}
             <div className="relative">
-              {/* Bouton d'échange pour mobile */}
-              <div className="lg:hidden absolute -top-6 left-1/2 -translate-x-1/2 z-20">
+              {/* Bouton d'échange pour mobile/tablet */}
+              <div className="xl:hidden absolute -top-5 left-1/2 -translate-x-1/2 z-20">
                 <motion.button
                   type="button"
                   onClick={swapCities}
@@ -150,7 +168,7 @@ const SearchForm: React.FC<SearchFormProps> = ({ defaultValues }) => {
                            shadow-lg hover:shadow-orange-500/25 
                            transition-all duration-300 cursor-pointer
                            focus:outline-none focus:ring-2 focus:ring-orange-500
-                           border-4 border-gray-900"
+                           border-2 border-gray-900"
                 >
                   <ArrowLeftRight className="w-4 h-4 text-white" />
                 </motion.button>
@@ -167,65 +185,136 @@ const SearchForm: React.FC<SearchFormProps> = ({ defaultValues }) => {
             </div>
           </div>
 
-          {/* Date Picker */}
-          <div className="lg:w-[220px]">
-            <DatePicker
-              value={formData.date}
-              onChange={(date) => setFormData({ ...formData, date })}
-              className="w-full"
-              error={errors.date}
-            />
-          </div>
-
-          {/* Passengers Selector */}
-          <div className="lg:w-[200px] relative">
-            <button
-              type="button"
-              onClick={() => setIsPassengersOpen(!isPassengersOpen)}
-              className="w-full h-[42px] px-4 rounded-lg bg-gray-800/50 border border-white/20
-                       text-white flex items-center justify-between hover:border-orange-400
-                       transition-colors focus:outline-none focus:ring-2 focus:ring-orange-400"
-            >
-              <div className="flex items-center gap-2">
-                <Users className="w-5 h-5 text-orange-400" />
-                <span>
-                  {formData.passengers} voyageur
-                  {formData.passengers > 1 ? "s" : ""}
-                </span>
-              </div>
-              <ChevronDown className="w-5 h-5 text-gray-400" />
-            </button>
-
-            <AnimatePresence>
-              {isPassengersOpen && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="absolute top-full left-0 right-0 mt-2 bg-gray-900 rounded-lg
-                           shadow-xl border border-gray-800 p-2 z-50"
+          {/* Dates + Passagers (groupe compact) */}
+          <div
+            className={`grid grid-cols-1 xl:grid-cols-[max-content,260px] gap-3 xl:flex-none xl:w-auto`}
+          >
+            {/* Date range group (compact) */}
+            <div className="w-full xl:w-auto">
+              <label className="block xl:hidden text-sm font-medium text-gray-400 mb-1">
+                {formData.isRoundTrip ? "Dates" : "Date de départ"}
+              </label>
+              <div className="flex flex-col xl:flex-row items-stretch xl:items-center gap-2">
+                <div
+                  className={`w-full shrink-0 ${
+                    formData.isRoundTrip ? "xl:w-[200px]" : "xl:w-[180px]"
+                  }`}
                 >
-                  {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => (
-                    <button
-                      key={num}
-                      type="button"
-                      onClick={() => {
-                        setFormData({ ...formData, passengers: num });
-                        setIsPassengersOpen(false);
-                      }}
-                      className={`w-full px-4 py-2 text-left rounded-md transition-colors
+                  <DatePicker
+                    value={formData.date}
+                    onChange={(date) => setFormData({ ...formData, date })}
+                    className="w-full"
+                    error={errors.date}
+                  />
+                </div>
+                {formData.isRoundTrip && (
+                  <>
+                    <span className="hidden xl:inline text-gray-500">→</span>
+                    <div className="w-full xl:w-[200px] shrink-0">
+                      <DatePicker
+                        value={formData.returnDate || ""}
+                        onChange={(date) =>
+                          setFormData({ ...formData, returnDate: date })
+                        }
+                        className="w-full"
+                        error={errors.returnDate}
+                      />
+                    </div>
+                  </>
+                )}
+              </div>
+              {/* Inline errors */}
+              {(errors.date || errors.returnDate) && (
+                <div className="mt-1 flex flex-col sm:flex-row gap-2 text-xs text-red-400">
+                  {errors.date && <span>{errors.date}</span>}
+                  {errors.returnDate && <span>{errors.returnDate}</span>}
+                </div>
+              )}
+            </div>
+
+            {/* Passengers Selector */}
+            <div className="xl:w-full relative">
+              <button
+                type="button"
+                onClick={() => setIsPassengersOpen(!isPassengersOpen)}
+                className="w-full h-[42px] px-4 rounded-lg bg-gray-800/50 border border-white/20
+                         text-white flex items-center justify-between hover:border-orange-400
+                         transition-colors focus:outline-none focus:ring-2 focus:ring-orange-400"
+              >
+                <div className="flex items-center gap-2">
+                  <Users className="w-5 h-5 text-orange-400" />
+                  <span className="whitespace-nowrap">
+                    {formData.passengers} voyageur
+                    {formData.passengers > 1 ? "s" : ""}
+                  </span>
+                </div>
+                <ChevronDown className="w-5 h-5 text-gray-400" />
+              </button>
+
+              <AnimatePresence>
+                {isPassengersOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="absolute top-full left-0 right-0 mt-2 bg-gray-900 rounded-lg
+                           shadow-xl border border-gray-800 p-2 z-[60] max-h-48 overflow-y-auto custom-scrollbar"
+                  >
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((num) => (
+                      <button
+                        key={num}
+                        type="button"
+                        onClick={() => {
+                          setFormData({ ...formData, passengers: num });
+                          setIsPassengersOpen(false);
+                        }}
+                        className={`w-full px-4 py-2 text-left rounded-md transition-colors
                                 ${
                                   formData.passengers === num
                                     ? "bg-orange-500/20 text-orange-400"
                                     : "text-gray-400 hover:bg-gray-800"
                                 }`}
-                    >
-                      {num} voyageur{num > 1 ? "s" : ""}
-                    </button>
-                  ))}
-                </motion.div>
-              )}
-            </AnimatePresence>
+                      >
+                        {num} voyageur{num > 1 ? "s" : ""}
+                      </button>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </div>
+        </div>
+
+        {/* Trip Type Toggle (placé juste au-dessus du bouton de recherche) */}
+        <div className="flex items-center justify-center">
+          <div
+            className="flex items-center bg-gray-800/50 rounded-xl p-1 border border-white/20 
+                        shadow-lg backdrop-blur-sm"
+          >
+            <button
+              type="button"
+              onClick={() =>
+                setFormData({ ...formData, isRoundTrip: false, returnDate: "" })
+              }
+              className={`px-6 py-2.5 rounded-lg text-sm font-medium transition-all duration-300 ${
+                !formData.isRoundTrip
+                  ? "bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg shadow-orange-500/25"
+                  : "text-gray-300 hover:text-white hover:bg-gray-700/50"
+              }`}
+            >
+              Aller simple
+            </button>
+            <button
+              type="button"
+              onClick={() => setFormData({ ...formData, isRoundTrip: true })}
+              className={`px-6 py-2.5 rounded-lg text-sm font-medium transition-all duration-300 ${
+                formData.isRoundTrip
+                  ? "bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg shadow-orange-500/25"
+                  : "text-gray-300 hover:text-white hover:bg-gray-700/50"
+              }`}
+            >
+              Aller-retour
+            </button>
           </div>
         </div>
 
